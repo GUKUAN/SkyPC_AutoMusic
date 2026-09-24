@@ -180,6 +180,18 @@ namespace SkyPC_AutoMusic.ViewModel
             }
         }
 
+        //GitHub Token（可选）
+        public string GitHubToken
+        {
+            get { return settings.GitHubToken; }
+            set
+            {
+                settings.GitHubToken = value;
+                OnPropertyChanged();
+                Save();
+            }
+        }
+
         //版本号（从程序集读取，避免写死在界面里）
         public string VersionText
         {
@@ -263,6 +275,7 @@ namespace SkyPC_AutoMusic.ViewModel
             target.CustomKeys = source.CustomKeys;
             target.UseHotkeys = source.UseHotkeys;
             target.PlaylistInitialized = source.PlaylistInitialized;
+            target.GitHubToken = source.GitHubToken;
         }
 
         //保存设置

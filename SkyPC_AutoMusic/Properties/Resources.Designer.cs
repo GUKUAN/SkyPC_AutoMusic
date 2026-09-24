@@ -662,5 +662,212 @@ namespace SkyPC_AutoMusic.Properties {
                 return ResourceManager.GetString("Play_Info_Notes", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 市场 的本地化字符串。
+        /// </summary>
+        public static string Main_Market {
+            get {
+                return ResourceManager.GetString("Main_Market", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 曲谱市场 的本地化字符串。
+        /// </summary>
+        public static string Market_Header {
+            get {
+                return ResourceManager.GetString("Market_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 刷新清单 的本地化字符串。
+        /// </summary>
+        public static string Market_Refresh {
+            get {
+                return ResourceManager.GetString("Market_Refresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 分类 的本地化字符串。
+        /// </summary>
+        public static string Market_Category {
+            get {
+                return ResourceManager.GetString("Market_Category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 子类 的本地化字符串。
+        /// </summary>
+        public static string Market_SubCategory {
+            get {
+                return ResourceManager.GetString("Market_SubCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 全部 的本地化字符串。
+        /// </summary>
+        public static string Market_All {
+            get {
+                return ResourceManager.GetString("Market_All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 搜索曲名 的本地化字符串。
+        /// </summary>
+        public static string Market_SearchHint {
+            get {
+                return ResourceManager.GetString("Market_SearchHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 搜索 的本地化字符串。
+        /// </summary>
+        public static string Market_Btn_Search {
+            get {
+                return ResourceManager.GetString("Market_Btn_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 下载并导入 的本地化字符串。
+        /// </summary>
+        public static string Market_Download {
+            get {
+                return ResourceManager.GetString("Market_Download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 下载并导入当前列表 的本地化字符串。
+        /// </summary>
+        public static string Market_DownloadAll {
+            get {
+                return ResourceManager.GetString("Market_DownloadAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 已下载 的本地化字符串。
+        /// </summary>
+        public static string Market_Downloaded {
+            get {
+                return ResourceManager.GetString("Market_Downloaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 曲库 {0} 首 · 更新于 {1} 的本地化字符串。
+        /// </summary>
+        public static string Market_Status {
+            get {
+                return ResourceManager.GetString("Market_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 还没有曲库清单，点“刷新清单”获取 的本地化字符串。
+        /// </summary>
+        public static string Market_StatusEmpty {
+            get {
+                return ResourceManager.GetString("Market_StatusEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在获取曲库清单... 的本地化字符串。
+        /// </summary>
+        public static string Market_Fetching {
+            get {
+                return ResourceManager.GetString("Market_Fetching", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 曲库清单获取失败 的本地化字符串。
+        /// </summary>
+        public static string Market_FetchFailed {
+            get {
+                return ResourceManager.GetString("Market_FetchFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 请求过于频繁，请在设置中填写 GitHub Token 的本地化字符串。
+        /// </summary>
+        public static string Market_RateLimit {
+            get {
+                return ResourceManager.GetString("Market_RateLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在下载 {0}/{1} 的本地化字符串。
+        /// </summary>
+        public static string Market_Downloading {
+            get {
+                return ResourceManager.GetString("Market_Downloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 已下载并导入 {0} 首 的本地化字符串。
+        /// </summary>
+        public static string Market_ImportDone {
+            get {
+                return ResourceManager.GetString("Market_ImportDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 没有符合条件的曲谱 的本地化字符串。
+        /// </summary>
+        public static string Market_Empty {
+            get {
+                return ResourceManager.GetString("Market_Empty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 来源仓库 的本地化字符串。
+        /// </summary>
+        public static string Market_Repo {
+            get {
+                return ResourceManager.GetString("Market_Repo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 大小 的本地化字符串。
+        /// </summary>
+        public static string Market_Col_Size {
+            get {
+                return ResourceManager.GetString("Market_Col_Size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 GitHub Token（可选） 的本地化字符串。
+        /// </summary>
+        public static string Options_GitHubToken {
+            get {
+                return ResourceManager.GetString("Options_GitHubToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 用于提高市场清单请求限额，留空则为匿名访问 的本地化字符串。
+        /// </summary>
+        public static string Options_Tips_Token {
+            get {
+                return ResourceManager.GetString("Options_Tips_Token", resourceCulture);
+            }
+        }
     }
 }

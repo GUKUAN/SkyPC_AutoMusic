@@ -57,6 +57,18 @@
                             <views:UserControlList/>
                         </Grid>
                     </TabItem>
+                    <!-- 市场标签 -->
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel Width="auto" Height="auto">
+                                <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Storefront" />
+                                <TextBlock HorizontalAlignment="Center" Text="{x:Static loc:Resources.Main_Market}" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid>
+                            <views:UserControlMarket/>
+                        </Grid>
+                    </TabItem>
                     <!-- 第三个标签 -->
                     <TabItem>
                         <TabItem.Header>

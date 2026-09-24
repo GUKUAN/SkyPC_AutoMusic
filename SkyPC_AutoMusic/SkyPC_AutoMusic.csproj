@@ -278,6 +278,9 @@
     <Compile Include="Event\WindowExpandEvent.cs" />
     <Compile Include="Event\WindowMinimizeEvent.cs" />
     <Compile Include="Model\AppPath.cs" />
+    <Compile Include="Model\MarketCatalog.cs" />
+    <Compile Include="Model\MarketItem.cs" />
+    <Compile Include="Model\SheetParser.cs" />
     <Compile Include="Model\LanguageItem.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Settings.cs" />
@@ -291,6 +294,7 @@
     </Compile>
     <Compile Include="ViewModel\FilterDialogViewModel.cs" />
     <Compile Include="ViewModel\KeybindDialogViewModel.cs" />
+    <Compile Include="ViewModel\MarketViewModel.cs" />
     <Compile Include="ViewModel\ListViewModel.cs" />
     <Compile Include="ViewModel\NotificationObject.cs" />
     <Compile Include="ViewModel\OptionsViewModel.cs" />
@@ -304,6 +308,9 @@
     </Compile>
     <Compile Include="View\UserControlKeybindDialog.xaml.cs">
       <DependentUpon>UserControlKeybindDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControlMarket.xaml.cs">
+      <DependentUpon>UserControlMarket.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UserControlList.xaml.cs">
       <DependentUpon>UserControlList.xaml</DependentUpon>
@@ -347,6 +354,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\UserControlKeybindDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserControlMarket.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

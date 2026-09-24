@@ -318,4 +318,73 @@
   <data name="Play_Info_Notes" xml:space="preserve">
     <value>Notes</value>
   </data>
+  <data name="Main_Market" xml:space="preserve">
+    <value>Market</value>
+  </data>
+  <data name="Market_Header" xml:space="preserve">
+    <value>Sheet Market</value>
+  </data>
+  <data name="Market_Refresh" xml:space="preserve">
+    <value>Refresh Catalog</value>
+  </data>
+  <data name="Market_Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Market_SubCategory" xml:space="preserve">
+    <value>Subcategory</value>
+  </data>
+  <data name="Market_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Market_SearchHint" xml:space="preserve">
+    <value>Search title</value>
+  </data>
+  <data name="Market_Btn_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Market_Download" xml:space="preserve">
+    <value>Download &amp; Import</value>
+  </data>
+  <data name="Market_DownloadAll" xml:space="preserve">
+    <value>Download &amp; Import Current List</value>
+  </data>
+  <data name="Market_Downloaded" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="Market_Status" xml:space="preserve">
+    <value>{0} sheets · updated {1}</value>
+  </data>
+  <data name="Market_StatusEmpty" xml:space="preserve">
+    <value>No catalog yet. Click Refresh to fetch.</value>
+  </data>
+  <data name="Market_Fetching" xml:space="preserve">
+    <value>Fetching catalog...</value>
+  </data>
+  <data name="Market_FetchFailed" xml:space="preserve">
+    <value>Failed to fetch catalog</value>
+  </data>
+  <data name="Market_RateLimit" xml:space="preserve">
+    <value>Rate limited. Please set a GitHub Token in settings.</value>
+  </data>
+  <data name="Market_Downloading" xml:space="preserve">
+    <value>Downloading {0}/{1}</value>
+  </data>
+  <data name="Market_ImportDone" xml:space="preserve">
+    <value>Downloaded and imported {0} sheets</value>
+  </data>
+  <data name="Market_Empty" xml:space="preserve">
+    <value>No matching sheets</value>
+  </data>
+  <data name="Market_Repo" xml:space="preserve">
+    <value>Source Repository</value>
+  </data>
+  <data name="Market_Col_Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Options_GitHubToken" xml:space="preserve">
+    <value>GitHub Token (optional)</value>
+  </data>
+  <data name="Options_Tips_Token" xml:space="preserve">
+    <value>Used to raise the market catalog request limit; leave empty for anonymous access</value>
+  </data>
 </root>

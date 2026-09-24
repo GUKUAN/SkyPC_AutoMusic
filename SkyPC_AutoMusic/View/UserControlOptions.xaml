@@ -154,6 +154,17 @@
                     </DockPanel>
                 </materialDesign:Card>
                 <!--标签-->
+                <Label Content="{x:Static loc:Resources.Main_Market}" Margin="10,0" FontWeight="Bold"/>
+                <!--GitHub Token-->
+                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
+                    <DockPanel>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Key" Margin="15"/>
+                        <TextBox Margin="0,10,15,10" Text="{Binding GitHubToken, UpdateSourceTrigger=PropertyChanged}" ToolTip="{x:Static loc:Resources.Options_Tips_Token}"
+                                 materialDesign:HintAssist.Hint="{x:Static loc:Resources.Options_GitHubToken}"
+                                 materialDesign:TextFieldAssist.HasClearButton="True" Style="{StaticResource MaterialDesignFilledTextBox}"/>
+                    </DockPanel>
+                </materialDesign:Card>
+                <!--标签-->
                 <Label Content="{x:Static loc:Resources.Options_Header_About}" Margin="10,0" FontWeight="Bold"/>
                 <!--开源地址-->
                 <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">

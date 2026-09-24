@@ -205,12 +205,14 @@ namespace SkyPC_AutoMusic.ViewModel
                         {
                             //计数
                             successCount++;
-                            //添加至列表
+                            //添加至列表（同路径的曲谱不重复导入）
                             if (System.Windows.Application.Current != null)
                             {
                                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                 {
-                                    SheetList.Add(song);
+                                    bool exists = SheetList.Any(s => String.Equals(s.sourcePath, song.sourcePath, StringComparison.OrdinalIgnoreCase));
+                                    if (!exists)
+                                        SheetList.Add(song);
                                 });
                             }
                         }
@@ -317,8 +319,8 @@ namespace SkyPC_AutoMusic.ViewModel
                 {
                     string json = rawJson.Substring(startIndex, endIndex - startIndex + 1);
 
-                    // 反序列化成C#对象
-                    sheet = JsonConvert.DeserializeObject<Sheet>(json);
+                    // 反序列化成C#对象（兼容 SkyStudio/Nightly 与 VSRG）
+                    sheet = SheetParser.Parse(json);
                     song = ConvertSheetToSong(sheet);
                     if (song != null)
                     {

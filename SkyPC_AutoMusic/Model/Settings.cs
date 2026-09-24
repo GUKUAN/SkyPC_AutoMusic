@@ -39,6 +39,7 @@ namespace SkyPC_AutoMusic.Model
         private List<int> customKeys;
         private bool useHotkeys;
         private bool playlistInitialized;
+        private string gitHubToken;
 
         //文件夹路径
         public string FolderPath
@@ -146,6 +147,13 @@ namespace SkyPC_AutoMusic.Model
         {
             get { return playlistInitialized; }
             set { playlistInitialized = value; }
+        }
+
+        //GitHub Token（可选，提升市场清单请求限额）
+        public string GitHubToken
+        {
+            get { return gitHubToken; }
+            set { gitHubToken = value; }
         }
 
         //把当前单例写到配置文件
