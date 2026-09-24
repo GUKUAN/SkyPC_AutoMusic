@@ -536,5 +536,131 @@ namespace SkyPC_AutoMusic.Properties {
                 return ResourceManager.GetString("UnhandledException", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 倍速 的本地化字符串。
+        /// </summary>
+        public static string Play_SpeedLabel {
+            get {
+                return ResourceManager.GetString("Play_SpeedLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 自定义键位 的本地化字符串。
+        /// </summary>
+        public static string Options_CustomKeys {
+            get {
+                return ResourceManager.GetString("Options_CustomKeys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 递归导入子文件夹 的本地化字符串。
+        /// </summary>
+        public static string Options_ImportSubfolders {
+            get {
+                return ResourceManager.GetString("Options_ImportSubfolders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 启用全局热键 的本地化字符串。
+        /// </summary>
+        public static string Options_Hotkeys {
+            get {
+                return ResourceManager.GetString("Options_Hotkeys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 热键：Ctrl+Alt+空格 播放/暂停，Ctrl+Alt+左/右 切换曲目 的本地化字符串。
+        /// </summary>
+        public static string Options_Tips_Hotkeys {
+            get {
+                return ResourceManager.GetString("Options_Tips_Hotkeys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 自定义键位 的本地化字符串。
+        /// </summary>
+        public static string Keybind_Title {
+            get {
+                return ResourceManager.GetString("Keybind_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 点击左侧任意一格，然后按下键盘上的按键即可绑定 的本地化字符串。
+        /// </summary>
+        public static string Keybind_Tips {
+            get {
+                return ResourceManager.GetString("Keybind_Tips", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 恢复默认 的本地化字符串。
+        /// </summary>
+        public static string Keybind_Reset {
+            get {
+                return ResourceManager.GetString("Keybind_Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 该乐谱已加密，暂不支持导入 的本地化字符串。
+        /// </summary>
+        public static string List_ImportEncrypted {
+            get {
+                return ResourceManager.GetString("List_ImportEncrypted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 原因 的本地化字符串。
+        /// </summary>
+        public static string List_ImportFailureReason {
+            get {
+                return ResourceManager.GetString("List_ImportFailureReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 松开以导入乐谱 的本地化字符串。
+        /// </summary>
+        public static string List_DropTips {
+            get {
+                return ResourceManager.GetString("List_DropTips", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 速度 的本地化字符串。
+        /// </summary>
+        public static string Play_Info_BPM {
+            get {
+                return ResourceManager.GetString("Play_Info_BPM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 时长 的本地化字符串。
+        /// </summary>
+        public static string Play_Info_Duration {
+            get {
+                return ResourceManager.GetString("Play_Info_Duration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 音符数 的本地化字符串。
+        /// </summary>
+        public static string Play_Info_Notes {
+            get {
+                return ResourceManager.GetString("Play_Info_Notes", resourceCulture);
+            }
+        }
     }
 }

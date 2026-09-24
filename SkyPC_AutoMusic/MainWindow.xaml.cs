@@ -36,6 +36,15 @@ namespace SkyPC_AutoMusic
         double originalHeight;
         public static MainWindow Instance { get; private set; }
 
+        //全局热键
+        private const int HOTKEY_PLAY_PAUSE = 0x4D01;
+        private const int HOTKEY_PREVIOUS = 0x4D02;
+        private const int HOTKEY_NEXT = 0x4D03;
+
+        private IntPtr windowHandle = IntPtr.Zero;
+        private HwndSource hwndSource;
+        private bool hotkeysWanted;
+
         public MainWindow()
         {
             //事件聚合器订阅
@@ -45,6 +54,7 @@ namespace SkyPC_AutoMusic
             EA.EventAggregator.GetEvent<AddBackgroundEvent>().Subscribe(AddBackground);
             EA.EventAggregator.GetEvent<DeleteBackgroundEvent>().Subscribe(DeleteBackground);
             EA.EventAggregator.GetEvent<SendMessageSnackbar>().Subscribe(SendMessageSnackbar);
+            EA.EventAggregator.GetEvent<SwitchHotkeysEvent>().Subscribe(ApplyHotkeys);
             //初始化
             InitializeComponent();
             originalHeight = this.Height;
@@ -52,13 +62,24 @@ namespace SkyPC_AutoMusic
             //防止窗口成为焦点
             lastActiveWindowHandle = Win32.GetForegroundWindow();
             Deactivated += MainWindow_Deactivated;
+            //拖拽导入
+            AllowDrop = true;
+            DragOver += MainWindow_DragOver;
+            Drop += MainWindow_Drop;
             SourceInitialized += (object sender, EventArgs e) =>
             {
                 var handle = new WindowInteropHelper(this).Handle;
                 var exstyle = Win32.GetWindowLong(handle, Win32.GWL_EXSTYLE);
                 exstyle |= Win32.WS_EX_NOACTIVATE;
                 Win32.SetWindowLong(handle, Win32.GWL_EXSTYLE, exstyle);
+                //窗口句柄好了，挂上热键的消息钩子
+                windowHandle = handle;
+                hwndSource = HwndSource.FromHwnd(handle);
+                if (hwndSource != null)
+                    hwndSource.AddHook(WndProc);
+                ApplyHotkeys(hotkeysWanted);
             };
+            Closed += (object sender, EventArgs e) => { UnregisterHotkeys(); };
         }
 
         
@@ -69,14 +90,14 @@ namespace SkyPC_AutoMusic
             //string imgPath = AppDomain.CurrentDomain.BaseDirectory + "bg.jpg";
             //BitmapImage img = new BitmapImage(new Uri(imgPath));
             Body.Background = Brushes.Transparent;
-            Background.Source = img;
+            BgImage.Source = img;
         }
 
         //删除背景图像
         private void DeleteBackground()
         {
             Body.SetResourceReference(Control.BackgroundProperty, "MaterialDesignPaper");
-            Background.Source = null;
+            BgImage.Source = null;
         }
 
         //窗体位置拖动
@@ -136,6 +157,74 @@ namespace SkyPC_AutoMusic
         private void MainWindow_Deactivated(object sender, EventArgs e)
         {
             lastActiveWindowHandle = Win32.GetForegroundWindow();
+        }
+
+        //拖拽文件进来
+        private void MainWindow_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effects = DragDropEffects.Copy;
+            else
+                e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        private void MainWindow_Drop(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+                return;
+
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length > 0)
+                EA.EventAggregator.GetEvent<AddFilesEvent>().Publish(files);
+        }
+
+        //开关全局热键
+        private void ApplyHotkeys(bool enable)
+        {
+            hotkeysWanted = enable;
+            if (windowHandle == IntPtr.Zero)
+                return;
+
+            UnregisterHotkeys();
+            if (!enable)
+                return;
+
+            uint modifiers = Win32.MOD_CONTROL | Win32.MOD_ALT;
+            Win32.RegisterHotKey(windowHandle, HOTKEY_PLAY_PAUSE, modifiers, 0x20);//空格
+            Win32.RegisterHotKey(windowHandle, HOTKEY_PREVIOUS, modifiers, 0x25);//左
+            Win32.RegisterHotKey(windowHandle, HOTKEY_NEXT, modifiers, 0x27);//右
+        }
+
+        private void UnregisterHotkeys()
+        {
+            if (windowHandle == IntPtr.Zero)
+                return;
+
+            Win32.UnregisterHotKey(windowHandle, HOTKEY_PLAY_PAUSE);
+            Win32.UnregisterHotKey(windowHandle, HOTKEY_PREVIOUS);
+            Win32.UnregisterHotKey(windowHandle, HOTKEY_NEXT);
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == Win32.WM_HOTKEY)
+            {
+                switch (wParam.ToInt32())
+                {
+                    case HOTKEY_PLAY_PAUSE:
+                        EA.EventAggregator.GetEvent<PauseSongEvent>().Publish();
+                        break;
+                    case HOTKEY_PREVIOUS:
+                        EA.EventAggregator.GetEvent<NextPreviousSongEvent>().Publish(false);
+                        break;
+                    case HOTKEY_NEXT:
+                        EA.EventAggregator.GetEvent<NextPreviousSongEvent>().Publish(true);
+                        break;
+                }
+                handled = true;
+            }
+            return IntPtr.Zero;
         }
     }
 }

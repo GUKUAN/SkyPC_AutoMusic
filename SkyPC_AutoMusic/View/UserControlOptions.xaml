@@ -124,6 +124,35 @@
                         <TextBlock Text="{x:Static loc:Resources.Options_KeyMapper}" VerticalAlignment="Center" />
                     </DockPanel>
                 </materialDesign:Card>
+                <!--自定义键位-->
+                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <ToggleButton Margin="15,0" IsChecked="{Binding UseCustomKeyMapper}"/>
+                            <Button Style="{StaticResource MaterialDesignIconButton}" Command="{Binding OpenKeybindCommand}" Cursor="Hand" ToolTip="{x:Static loc:Resources.Keybind_Title}">
+                                <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="Pencil"/>
+                            </Button>
+                        </StackPanel>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Keyboard" Margin="15"/>
+                        <TextBlock Text="{x:Static loc:Resources.Options_CustomKeys}" VerticalAlignment="Center" />
+                    </DockPanel>
+                </materialDesign:Card>
+                <!--递归导入子文件夹-->
+                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
+                    <DockPanel>
+                        <ToggleButton DockPanel.Dock="Right" Margin="15,0" IsChecked="{Binding ImportSubfolders}"/>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="FolderOutline" Margin="15"/>
+                        <TextBlock Text="{x:Static loc:Resources.Options_ImportSubfolders}" VerticalAlignment="Center" />
+                    </DockPanel>
+                </materialDesign:Card>
+                <!--全局热键-->
+                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
+                    <DockPanel>
+                        <ToggleButton DockPanel.Dock="Right" Margin="15,0" IsChecked="{Binding UseHotkeys}"/>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Cog" Margin="15"/>
+                        <TextBlock Text="{x:Static loc:Resources.Options_Hotkeys}" VerticalAlignment="Center" />
+                    </DockPanel>
+                </materialDesign:Card>
                 <!--标签-->
                 <Label Content="{x:Static loc:Resources.Options_Header_About}" Margin="10,0" FontWeight="Bold"/>
                 <!--开源地址-->
@@ -140,7 +169,7 @@
                 <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
                     <DockPanel>
                         <materialDesign:PackIcon VerticalAlignment="Center" Kind="InformationOutline" Margin="15"/>
-                        <TextBlock Text="Version 2.1.5 (2024.5.5)" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding VersionText}" VerticalAlignment="Center" />
                     </DockPanel>
                 </materialDesign:Card>
             </StackPanel>

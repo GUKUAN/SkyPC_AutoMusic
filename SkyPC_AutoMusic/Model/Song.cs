@@ -22,6 +22,8 @@ namespace SkyPC_AutoMusic.Model
         public int bitsPerPage { get; set; }
         public int pitchLevel { get; set; }
         public bool isEncrypted { get; set; }
+        //源文件路径（用于播放列表持久化）
+        public string sourcePath { get; set; }
         //所有节拍
         public List<Beat> Beats { get; set; }
     }

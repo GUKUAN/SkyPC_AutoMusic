@@ -37,7 +37,10 @@
                 <Label Content="/" HorizontalContentAlignment="Center" Width="15"/>
                 <Label Content="{Binding TotalTime}" HorizontalContentAlignment="Center" Width="40"/>
             </StackPanel>
-            <Button Style="{StaticResource MaterialDesignFlatButton}" Width="120" VerticalContentAlignment="Top" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}" Command="{Binding SwitchModeCommand}" Content="{Binding PlayModeLabel}" Cursor="Hand"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Width="120" VerticalContentAlignment="Top" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}" Command="{Binding SwitchModeCommand}" Content="{Binding PlayModeLabel}" Cursor="Hand"/>
+                <Label Content="{Binding SpeedLabel}" VerticalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+            </StackPanel>
         </StackPanel>
 
 

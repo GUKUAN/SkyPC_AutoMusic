@@ -5,6 +5,7 @@ using SkyPC_AutoMusic.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading;
@@ -22,16 +23,26 @@ namespace SkyPC_AutoMusic.Model
         {
             get
             {
-                if (currentSong == null || isPlayEnd)//没有乐谱
+                if (currentSong == null || currentSong.Beats == null || currentSong.Beats.Count == 0)//没有乐谱
                     return 0;
 
+                //播放完停在末尾，别弹回开头
+                if (isPlayEnd)
+                    return 1;
+
                 //double percentage = (DateTime.Now.Subtract(startPlay).TotalMilliseconds / speedModifier) / totalTimeProgress;
-                double percentage = (double)currentSong.Beats[currentBeatIndex].Time / (double)totalTimeProgress;
+                int index = currentBeatIndex;
+                if (index >= currentSong.Beats.Count)
+                    index = currentSong.Beats.Count - 1;
+                if (index < 0)
+                    index = 0;
+
+                double percentage = (double)currentSong.Beats[index].Time / (double)totalTimeProgress;
                 return percentage;
             }
             set
             {
-                if (currentSong == null)//没有乐谱
+                if (currentSong == null || currentSong.Beats == null || currentSong.Beats.Count == 0)//没有乐谱
                     return;
 
                 //double past = totalTimeProgress * value;
@@ -51,7 +62,15 @@ namespace SkyPC_AutoMusic.Model
 
                 //startPlay = DateTime.Now.Subtract(TimeSpan.FromMilliseconds(past / speedModifier));
 
-                currentBeatIndex = (int)((currentSong.Beats.Count - 1) * value);
+                //拖动进度后允许重新播放
+                int index = (int)((currentSong.Beats.Count - 1) * value);
+                if (index < 0)
+                    index = 0;
+                if (index > currentSong.Beats.Count - 1)
+                    index = currentSong.Beats.Count - 1;
+
+                currentBeatIndex = index;
+                isPlayEnd = false;
                 startPlay = DateTime.Now.AddMilliseconds(-currentSong.Beats[currentBeatIndex].Time / speedModifier);
 
                 UpdateCurrentTimeLabel();
@@ -132,9 +151,9 @@ namespace SkyPC_AutoMusic.Model
         // 节拍进度
         private int beatIntervalProgress;
         // 按下了停止
-        public bool isStop = true;
+        public volatile bool isStop = true;
         // 播放完当前乐谱
-        public bool isPlayEnd;
+        public volatile bool isPlayEnd;
 
         // 乐谱总时长
         private int totalTimeProgress = 0;
@@ -179,6 +198,7 @@ namespace SkyPC_AutoMusic.Model
         {
             currentTime = "00:00";
             currentBeatIndex = 0;
+            isPlayEnd = false;
             startPlay = DateTime.Now;
             totalTimeProgress = currentSong.Beats[currentSong.Beats.Count - 1].Time;
         }
@@ -258,7 +278,16 @@ namespace SkyPC_AutoMusic.Model
         {
             //TimeSpan ts = DateTime.Now.Subtract(startPlay);
             //ts = TimeSpan.FromMilliseconds(ts.TotalMilliseconds * speedModifier);
-            TimeSpan ts = TimeSpan.FromMilliseconds(currentSong.Beats[currentBeatIndex].Time);
+            if (currentSong == null || currentSong.Beats == null || currentSong.Beats.Count == 0)
+                return;
+
+            int index = currentBeatIndex;
+            if (index >= currentSong.Beats.Count)
+                index = currentSong.Beats.Count - 1;
+            if (index < 0)
+                index = 0;
+
+            TimeSpan ts = TimeSpan.FromMilliseconds(currentSong.Beats[index].Time);
             currentTime = string.Format("{0:mm\\:ss}", ts);
         }
 
@@ -266,264 +295,235 @@ namespace SkyPC_AutoMusic.Model
         {
             Task.Run(() =>
             {
-                while (true)
+                //提高定时器精度，保证按键节奏
+                Win32.timeBeginPeriod(1);
+                try
                 {
-                    //播放结束状态
-                    isPlayEnd = currentBeatIndex == currentSong.Beats.Count;
-
-                    if (!isPlayEnd && !isStop)
+                    while (true)
                     {
-                        //正常播放
-                        AutoPlay();
-                    }
-                    else if (isPlayEnd)
-                    {
-                        //播放完毕
-                        isStop = true;
-                        playEndAction();
-                        break;
-                    }
-                    else
-                    {
-                        //手动暂停
-                        break;
-                    }
-
-                    //抬起按键
-                    if (isStop && currentBeatIndex > 0)
-                    {
-                        foreach (NoteKey key in currentSong.Beats[currentBeatIndex - 1].Keys)
+                        //乐谱被清掉了就收手，别空引用
+                        if (currentSong == null || currentSong.Beats == null)
                         {
-                            SendKey(key, false);
+                            isStop = true;
+                            break;
                         }
+
+                        //播放结束状态
+                        isPlayEnd = currentBeatIndex >= currentSong.Beats.Count;
+
+                        if (isPlayEnd)
+                        {
+                            //播放完毕
+                            isStop = true;
+                            playEndAction();
+                            break;
+                        }
+
+                        if (isStop)
+                        {
+                            //手动暂停：把上一个节拍按住的键松开，避免卡键
+                            ReleaseBeatKeys(currentBeatIndex - 1);
+                            break;
+                        }
+
+                        //正常播放；没到时间就小睡，别空转烧 CPU
+                        if (!AutoPlay())
+                            Thread.Sleep(1);
                     }
+                }
+                finally
+                {
+                    Win32.timeEndPeriod(1);
                 }
             });
         }
 
-        private void AutoPlay()
+        //松开指定节拍上按下的所有键
+        private void ReleaseBeatKeys(int beatIndex)
+        {
+            if (currentSong == null || currentSong.Beats == null)
+                return;
+            if (beatIndex < 0 || beatIndex >= currentSong.Beats.Count)
+                return;
+
+            foreach (NoteKey key in currentSong.Beats[beatIndex].Keys)
+            {
+                SendKey(key, false);
+            }
+        }
+
+        //返回是否已经处理了当前节拍
+        private bool AutoPlay()
         {
             //缓存
             int beatIndex = currentBeatIndex;
+            if (currentSong == null || currentSong.Beats == null || beatIndex >= currentSong.Beats.Count)
+                return true;
+
             //读取按键
-            List<NoteKey> keys;
-            if (currentSong != null)
-                keys = currentSong.Beats[beatIndex].Keys;
-            else
-                return;
+            List<NoteKey> keys = currentSong.Beats[beatIndex].Keys;
 
             //判断时间
             int time = currentSong.Beats[beatIndex].Time;
             bool flag = DateTime.Now > startPlay.AddMilliseconds(time / speedModifier);
 
-            if (flag)
+            if (!flag)
+                return false;
+
+            //按下
+            foreach (NoteKey key in keys)
             {
-                //按下
-                foreach (NoteKey key in keys)
-                {
-                    SendKey(key, true);
-                }
-
-                //等待
-                Thread.Sleep(durationTime);
-
-                //抬起
-                foreach (NoteKey key in keys)
-                {
-                    if (beatIndex == currentSong.Beats.Count - 1 || !isDelayToReleaseKey)//最后一拍或关闭延音功能
-                    {
-                        //正常抬起
-                        SendKey(key, false);
-                        continue;
-                    }
-                    else if (!currentSong.Beats[beatIndex + 1].Keys.Contains(key))//下一拍不包含音节
-                    {
-                        //延音抬起
-                        SendKey(key, false);
-                    }//下一拍包含音节则不抬起
-                }
-
-                //更新索引
-                currentBeatIndex++;
+                SendKey(key, true);
             }
+
+            //等待
+            Thread.Sleep(durationTime);
+
+            //抬起
+            foreach (NoteKey key in keys)
+            {
+                if (beatIndex == currentSong.Beats.Count - 1 || !isDelayToReleaseKey)//最后一拍或关闭延音功能
+                {
+                    //正常抬起
+                    SendKey(key, false);
+                    continue;
+                }
+                else if (!currentSong.Beats[beatIndex + 1].Keys.Contains(key))//下一拍不包含音节
+                {
+                    //延音抬起
+                    SendKey(key, false);
+                }//下一拍包含音节则不抬起
+            }
+
+            //更新索引
+            currentBeatIndex++;
+            return true;
         }
 
         private void SendKey(NoteKey key, bool isPress)
         {
-            byte bVk = 0;
+            int noteIndex = (int)key % 15;
+            byte bVk = (byte)ResolveVirtualKey(noteIndex);
+            if (bVk == 0)
+                return;
 
-            if (!isUseSkyStudioKeyMapper)
+            byte bScan = Win32.MapVirtualKey(bVk, 0);
+
+            if (isPress)
             {
-                switch (key)//YUIOP
+                //按下
+                if (isPlayBackground)
                 {
-                    case NoteKey._1Key0:
-                    case NoteKey._2Key0:
-                        bVk = 0x59;
-                        break;
-                    case NoteKey._1Key1:
-                    case NoteKey._2Key1:
-                        bVk = 0x55;
-                        break;
-                    case NoteKey._1Key2:
-                    case NoteKey._2Key2:
-                        bVk = 0x49;
-                        break;
-                    case NoteKey._1Key3:
-                    case NoteKey._2Key3:
-                        bVk = 0x4F;
-                        break;
-                    case NoteKey._1Key4:
-                    case NoteKey._2Key4:
-                        bVk = 0x50;
-                        break;
-                    case NoteKey._1Key5:
-                    case NoteKey._2Key5:
-                        bVk = 0x48;
-                        break;
-                    case NoteKey._1Key6:
-                    case NoteKey._2Key6:
-                        bVk = 0x4A;
-                        break;
-                    case NoteKey._1Key7:
-                    case NoteKey._2Key7:
-                        bVk = 0x4B;
-                        break;
-                    case NoteKey._1Key8:
-                    case NoteKey._2Key8:
-                        bVk = 0x4C;
-                        break;
-                    case NoteKey._1Key9:
-                    case NoteKey._2Key9:
-                        bVk = 0xBA;
-                        break;
-                    case NoteKey._1Key10:
-                    case NoteKey._2Key10:
-                        bVk = 0x4E;
-                        break;
-                    case NoteKey._1Key11:
-                    case NoteKey._2Key11:
-                        bVk = 0x4D;
-                        break;
-                    case NoteKey._1Key12:
-                    case NoteKey._2Key12:
-                        bVk = 0xBC;
-                        break;
-                    case NoteKey._1Key13:
-                    case NoteKey._2Key13:
-                        bVk = 0xBE;
-                        break;
-                    case NoteKey._1Key14:
-                    case NoteKey._2Key14:
-                        bVk = 0xBF;
-                        break;
-                    default:
-                        break;
+                    Win32.PostMessage(hWnd, Win32.WM_ACTIVATE, (IntPtr)Win32.WA_ACTIVE, IntPtr.Zero);
+                    int lp = 1;
+                    lp |= bScan << 16;
+                    Win32.PostMessage(hWnd, Win32.WM_KEYDOWN, (IntPtr)bVk, (IntPtr)lp);
+                }
+                else
+                {
+                    SendKeyInput(bVk, bScan, true);
                 }
             }
             else
             {
-                switch (key)//QWERT
+                //释放
+                if (isPlayBackground)
                 {
-                    case NoteKey._1Key0:
-                    case NoteKey._2Key0:
-                        bVk = 0x51;
-                        break;
-                    case NoteKey._1Key1:
-                    case NoteKey._2Key1:
-                        bVk = 0x57;
-                        break;
-                    case NoteKey._1Key2:
-                    case NoteKey._2Key2:
-                        bVk = 0x45;
-                        break;
-                    case NoteKey._1Key3:
-                    case NoteKey._2Key3:
-                        bVk = 0x52;
-                        break;
-                    case NoteKey._1Key4:
-                    case NoteKey._2Key4:
-                        bVk = 0x54;
-                        break;
-                    case NoteKey._1Key5:
-                    case NoteKey._2Key5:
-                        bVk = 0x41;
-                        break;
-                    case NoteKey._1Key6:
-                    case NoteKey._2Key6:
-                        bVk = 0x53;
-                        break;
-                    case NoteKey._1Key7:
-                    case NoteKey._2Key7:
-                        bVk = 0x44;
-                        break;
-                    case NoteKey._1Key8:
-                    case NoteKey._2Key8:
-                        bVk = 0x46;
-                        break;
-                    case NoteKey._1Key9:
-                    case NoteKey._2Key9:
-                        bVk = 0x47;
-                        break;
-                    case NoteKey._1Key10:
-                    case NoteKey._2Key10:
-                        bVk = 0x5A;
-                        break;
-                    case NoteKey._1Key11:
-                    case NoteKey._2Key11:
-                        bVk = 0x58;
-                        break;
-                    case NoteKey._1Key12:
-                    case NoteKey._2Key12:
-                        bVk = 0x43;
-                        break;
-                    case NoteKey._1Key13:
-                    case NoteKey._2Key13:
-                        bVk = 0x56;
-                        break;
-                    case NoteKey._1Key14:
-                    case NoteKey._2Key14:
-                        bVk = 0x42;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            if (bVk != 0)
-            {
-                byte bScan = Win32.MapVirtualKey(bVk, 0);
-               
-                if (isPress)
-                {
-                    //按下
-                    if (isPlayBackground)
-                    {
-                        Win32.PostMessage(hWnd, Win32.WM_ACTIVATE, (IntPtr)Win32.WA_ACTIVE, IntPtr.Zero);
-                        int lp = 1;
-                        lp |= bScan << 16;
-                        Win32.PostMessage(hWnd, Win32.WM_KEYDOWN, (IntPtr)bVk, (IntPtr)lp);
-                    }
-                    else
-                    {
-                        Win32.keybd_event(bVk, bScan, Win32.KEYEVENTF_KEYDOWN, UIntPtr.Zero);
-                    }
+                    Win32.PostMessage(hWnd, Win32.WM_ACTIVATE, (IntPtr)Win32.WA_ACTIVE, IntPtr.Zero);
+                    int lp = 1;
+                    lp |= bScan << 16;
+                    lp |= 3 << 30;
+                    Win32.PostMessage(hWnd, Win32.WM_KEYUP, (IntPtr)bVk, (IntPtr)lp);
                 }
                 else
                 {
-                    //释放
-                    if (isPlayBackground)
-                    {
-                        Win32.PostMessage(hWnd, Win32.WM_ACTIVATE, (IntPtr)Win32.WA_ACTIVE, IntPtr.Zero);
-                        int lp = 1;
-                        lp |= bScan << 16;
-                        lp |= 3 << 30;
-                        Win32.PostMessage(hWnd, Win32.WM_KEYUP, (IntPtr)bVk, (IntPtr)lp);
-                    }
-                    else
-                    {
-                        Win32.keybd_event(bVk, bScan, Win32.KEYEVENTF_KEYUP, UIntPtr.Zero);
-                    }
+                    SendKeyInput(bVk, bScan, false);
                 }
+            }
+        }
+
+        //解析音符对应的虚拟键值，优先自定义键位
+        private int ResolveVirtualKey(int noteIndex)
+        {
+            if (Settings.Instance.UseCustomKeyMapper)
+            {
+                List<int> keys = Settings.Instance.CustomKeys;
+                if (keys != null && noteIndex >= 0 && noteIndex < keys.Count && keys[noteIndex] > 0)
+                    return keys[noteIndex];
+            }
+
+            return GetPresetVirtualKey(noteIndex);
+        }
+
+        //内置的两套预设键位
+        private int GetPresetVirtualKey(int noteIndex)
+        {
+            if (!isUseSkyStudioKeyMapper)
+            {
+                switch (noteIndex)//YUIOP
+                {
+                    case 0: return 0x59;
+                    case 1: return 0x55;
+                    case 2: return 0x49;
+                    case 3: return 0x4F;
+                    case 4: return 0x50;
+                    case 5: return 0x48;
+                    case 6: return 0x4A;
+                    case 7: return 0x4B;
+                    case 8: return 0x4C;
+                    case 9: return 0xBA;
+                    case 10: return 0x4E;
+                    case 11: return 0x4D;
+                    case 12: return 0xBC;
+                    case 13: return 0xBE;
+                    case 14: return 0xBF;
+                    default: return 0;
+                }
+            }
+            else
+            {
+                switch (noteIndex)//QWERT
+                {
+                    case 0: return 0x51;
+                    case 1: return 0x57;
+                    case 2: return 0x45;
+                    case 3: return 0x52;
+                    case 4: return 0x54;
+                    case 5: return 0x41;
+                    case 6: return 0x53;
+                    case 7: return 0x44;
+                    case 8: return 0x46;
+                    case 9: return 0x47;
+                    case 10: return 0x5A;
+                    case 11: return 0x58;
+                    case 12: return 0x43;
+                    case 13: return 0x56;
+                    case 14: return 0x42;
+                    default: return 0;
+                }
+            }
+        }
+
+        //用 SendInput 发送扫描码，比 keybd_event 兼容性好
+        private void SendKeyInput(byte bVk, byte bScan, bool isPress)
+        {
+            Win32.INPUT input = new Win32.INPUT();
+            input.type = Win32.INPUT_KEYBOARD;
+            input.U.ki.wVk = bVk;
+            input.U.ki.wScan = bScan;
+            input.U.ki.time = 0;
+            input.U.ki.dwExtraInfo = IntPtr.Zero;
+
+            if (bScan == 0)
+                input.U.ki.dwFlags = (uint)(isPress ? 0 : Win32.KEYEVENTF_KEYUP);
+            else
+                input.U.ki.dwFlags = (uint)Win32.KEYEVENTF_SCANCODE | (uint)(isPress ? 0 : Win32.KEYEVENTF_KEYUP);
+
+            uint sent = Win32.SendInput(1, new Win32.INPUT[] { input }, Marshal.SizeOf(typeof(Win32.INPUT)));
+            if (sent == 0)
+            {
+                //实在发不出去就退回旧接口
+                Win32.keybd_event(bVk, bScan, (uint)(isPress ? Win32.KEYEVENTF_KEYDOWN : Win32.KEYEVENTF_KEYUP), UIntPtr.Zero);
             }
         }
 

@@ -276,4 +276,46 @@
   <data name="Play_CantFindWindow" xml:space="preserve">
     <value>找不到游戏窗口</value>
   </data>
+  <data name="Play_SpeedLabel" xml:space="preserve">
+    <value>倍速</value>
+  </data>
+  <data name="Options_CustomKeys" xml:space="preserve">
+    <value>自定义键位</value>
+  </data>
+  <data name="Options_ImportSubfolders" xml:space="preserve">
+    <value>递归导入子文件夹</value>
+  </data>
+  <data name="Options_Hotkeys" xml:space="preserve">
+    <value>启用全局热键</value>
+  </data>
+  <data name="Options_Tips_Hotkeys" xml:space="preserve">
+    <value>热键：Ctrl+Alt+空格 播放/暂停，Ctrl+Alt+左/右 切换曲目</value>
+  </data>
+  <data name="Keybind_Title" xml:space="preserve">
+    <value>自定义键位</value>
+  </data>
+  <data name="Keybind_Tips" xml:space="preserve">
+    <value>点击左侧任意一格，然后按下键盘上的按键即可绑定</value>
+  </data>
+  <data name="Keybind_Reset" xml:space="preserve">
+    <value>恢复默认</value>
+  </data>
+  <data name="List_ImportEncrypted" xml:space="preserve">
+    <value>该乐谱已加密，暂不支持导入</value>
+  </data>
+  <data name="List_ImportFailureReason" xml:space="preserve">
+    <value>原因</value>
+  </data>
+  <data name="List_DropTips" xml:space="preserve">
+    <value>松开以导入乐谱</value>
+  </data>
+  <data name="Play_Info_BPM" xml:space="preserve">
+    <value>速度</value>
+  </data>
+  <data name="Play_Info_Duration" xml:space="preserve">
+    <value>时长</value>
+  </data>
+  <data name="Play_Info_Notes" xml:space="preserve">
+    <value>音符数</value>
+  </data>
 </root>

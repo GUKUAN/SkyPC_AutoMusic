@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace SkyPC_AutoMusic.Model
 {
@@ -30,6 +32,13 @@ namespace SkyPC_AutoMusic.Model
         private bool delayToReleaseKey;
         private bool playInBackground;
         private bool skyStudioKeyMapper;
+        //新增：播放列表 / 键位 / 热键
+        private List<string> sheetPaths;
+        private bool importSubfolders;
+        private bool useCustomKeyMapper;
+        private List<int> customKeys;
+        private bool useHotkeys;
+        private bool playlistInitialized;
 
         //文件夹路径
         public string FolderPath
@@ -85,6 +94,86 @@ namespace SkyPC_AutoMusic.Model
         {
             get { return skyStudioKeyMapper; }
             set { skyStudioKeyMapper = value; }
+        }
+
+        //播放列表（保存每条乐谱的文件路径，重启后原样恢复）
+        public List<string> SheetPaths
+        {
+            get
+            {
+                if (sheetPaths == null)
+                    sheetPaths = new List<string>();
+                return sheetPaths;
+            }
+            set { sheetPaths = value; }
+        }
+
+        //导入时是否递归子文件夹
+        public bool ImportSubfolders
+        {
+            get { return importSubfolders; }
+            set { importSubfolders = value; }
+        }
+
+        //是否使用自定义键位
+        public bool UseCustomKeyMapper
+        {
+            get { return useCustomKeyMapper; }
+            set { useCustomKeyMapper = value; }
+        }
+
+        //自定义键位（15 个虚拟键值，下标即音符序号）
+        public List<int> CustomKeys
+        {
+            get
+            {
+                if (customKeys == null || customKeys.Count != 15)
+                    customKeys = DefaultCustomKeys();
+                return customKeys;
+            }
+            set { customKeys = value; }
+        }
+
+        //是否启用全局热键
+        public bool UseHotkeys
+        {
+            get { return useHotkeys; }
+            set { useHotkeys = value; }
+        }
+
+        //播放列表是否已经初始化过（初始化后不再自动扫描旧文件夹）
+        public bool PlaylistInitialized
+        {
+            get { return playlistInitialized; }
+            set { playlistInitialized = value; }
+        }
+
+        //把当前单例写到配置文件
+        public static void Save()
+        {
+            try
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+                using (StreamWriter writer = new StreamWriter(AppPath.Settings))
+                {
+                    serializer.Serialize(writer, Instance);
+                }
+            }
+            catch
+            {
+                //写不进去就算了，别因为配置文件崩程序
+            }
+        }
+
+        //默认自定义键位（沿用天空默认的 YUIOP/HJKL;/NM,./ 布局）
+        public static List<int> DefaultCustomKeys()
+        {
+            return new List<int>
+            {
+                0x59, 0x55, 0x49, 0x4F, 0x50,
+                0x48, 0x4A, 0x4B, 0x4C, 0xBA,
+                0x4E, 0x4D, 0xBC, 0xBE, 0xBF
+            };
         }
     }
 }

@@ -276,4 +276,46 @@
   <data name="Play_CantFindWindow" xml:space="preserve">
     <value>Can't Find Game</value>
   </data>
+  <data name="Play_SpeedLabel" xml:space="preserve">
+    <value>Speed</value>
+  </data>
+  <data name="Options_CustomKeys" xml:space="preserve">
+    <value>Custom Key Bindings</value>
+  </data>
+  <data name="Options_ImportSubfolders" xml:space="preserve">
+    <value>Import Subfolders</value>
+  </data>
+  <data name="Options_Hotkeys" xml:space="preserve">
+    <value>Enable Global Hotkeys</value>
+  </data>
+  <data name="Options_Tips_Hotkeys" xml:space="preserve">
+    <value>Hotkeys: Ctrl+Alt+Space Play/Pause, Ctrl+Alt+Left/Right Prev/Next</value>
+  </data>
+  <data name="Keybind_Title" xml:space="preserve">
+    <value>Custom Key Bindings</value>
+  </data>
+  <data name="Keybind_Tips" xml:space="preserve">
+    <value>Click a slot on the left, then press a key on your keyboard to bind it</value>
+  </data>
+  <data name="Keybind_Reset" xml:space="preserve">
+    <value>Reset Default</value>
+  </data>
+  <data name="List_ImportEncrypted" xml:space="preserve">
+    <value>This sheet is encrypted and cannot be imported</value>
+  </data>
+  <data name="List_ImportFailureReason" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="List_DropTips" xml:space="preserve">
+    <value>Drop to import sheets</value>
+  </data>
+  <data name="Play_Info_BPM" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Play_Info_Duration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="Play_Info_Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
 </root>

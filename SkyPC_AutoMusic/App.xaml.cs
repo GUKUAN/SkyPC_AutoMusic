@@ -55,7 +55,7 @@ namespace SkyPC_AutoMusic
             XmlSerializer serializer = new XmlSerializer(typeof(Model.Settings));
             try
             {
-                using (StreamReader reader = new StreamReader("settings.xml"))
+                using (StreamReader reader = new StreamReader(AppPath.Settings))
                 {
                     string code = ((Model.Settings)(serializer.Deserialize(reader))).LanguageCode;
                     switch (code)

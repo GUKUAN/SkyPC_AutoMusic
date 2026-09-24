@@ -107,7 +107,17 @@ namespace SkyPC_AutoMusic.Model
         public double SliderSpeedModifier
         {
             get { return (int)player.SliderSpeedModifier; }
-            set { player.SliderSpeedModifier = value; }
+            set 
+            { 
+                player.SliderSpeedModifier = value;
+                OnPropertyChanged("SpeedLabel");
+            }
+        }
+
+        //倍数文字标签，方便看当前速度
+        public string SpeedLabel
+        {
+            get { return "x" + (player.SliderSpeedModifier / 10.0).ToString("0.0"); }
         }
 
         //播放模式标签
@@ -252,6 +262,7 @@ namespace SkyPC_AutoMusic.Model
             player.currentSheetIndex = 0;
             EA.EventAggregator.GetEvent<SongSwitchEvent>().Publish(player);
             player.InitializePlay();
+            UpdatePlayerUI();
         }
 
         private void ChangeHeadline(string songName)
@@ -262,6 +273,15 @@ namespace SkyPC_AutoMusic.Model
         private void UpdateSheetsCount(int SheetsCount)
         {
             sheetsCount = SheetsCount;
+            //列表被清空时，别让播放器还捏着已删除的乐谱
+            if (SheetsCount == 0 && player.currentSong != null)
+            {
+                player.isStop = true;
+                player.currentSong = null;
+                UpdatePlayerUI();
+                OnPropertyChanged("TogglePlayButtonIcon");
+                OnPropertyChanged("TogglePlayButtonLabel");
+            }
         }
 
         private void SongSwitchWithIndex(int index)
@@ -334,6 +354,13 @@ namespace SkyPC_AutoMusic.Model
                         break;
                 }
                 info += "\n" + Properties.Resources.Play_Info_PitchLevel + ": " + pitchLevel;
+                info += "\n" + Properties.Resources.Play_Info_BPM + ": " + player.currentSong.bpm;
+                info += "\n" + Properties.Resources.Play_Info_Duration + ": " + TotalTime;
+
+                int noteCount = 0;
+                if (player.currentSong.Beats != null)
+                    noteCount = player.currentSong.Beats.Sum(beat => beat.Keys.Count);
+                info += "\n" + Properties.Resources.Play_Info_Notes + ": " + noteCount;
 
                 SendDialog.MessageTips(info);
             }
@@ -341,6 +368,14 @@ namespace SkyPC_AutoMusic.Model
 
         private void PlayEndAction()
         {
+            //这个回调是在播放线程里触发的，UI 操作必须切回主线程
+            Application app = Application.Current;
+            if (app != null && !app.Dispatcher.CheckAccess())
+            {
+                app.Dispatcher.Invoke(new Action(PlayEndAction));
+                return;
+            }
+
             switch (playEndMode)
             {
                 case PlayEndMode.StopPlay:

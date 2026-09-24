@@ -39,7 +39,7 @@
             <TextBlock VerticalAlignment="Center" Margin="10" Foreground="{DynamicResource PrimaryHueMidBrush}" FontSize="20" Text="{Binding HeaderText}"/>
         </DockPanel>
 
-        <Border Grid.Row="1" Margin="10,0,10,10" BorderBrush="Gray" BorderThickness="5" CornerRadius="5" Opacity="0.7" Cursor="">
+        <Border Grid.Row="1" Margin="10,0,10,10" BorderBrush="Gray" BorderThickness="5" CornerRadius="5" Opacity="0.7" Cursor="" ToolTip="{x:Static loc:Resources.List_DropTips}">
             <ListView x:Name="SheetsListView" SelectionMode="Single" SelectedItem="{Binding SelectedItem}" ItemsSource="{Binding SheetList}" DisplayMemberPath="name" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">

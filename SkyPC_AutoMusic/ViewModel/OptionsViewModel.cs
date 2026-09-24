@@ -13,6 +13,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Threading;
@@ -29,11 +30,14 @@ namespace SkyPC_AutoMusic.ViewModel
 {
     internal class OptionsViewModel : NotificationObject
     {
-        private string url = "https://github.com/qwe5283/SkyPC_AutoMusic";
+        private string url = "https://github.com/GUKUAN/SkyPC_AutoMusic";
 
         private Settings settings;
 
         private ComboBox LanguageComboBox;
+
+        //是否已经挂上系统主题色的监听
+        private bool themeEventHooked;
 
         //乐谱文件夹路径
         public string FolderPath
@@ -70,11 +74,12 @@ namespace SkyPC_AutoMusic.ViewModel
                 if (value)
                 {
                     //系统接管主题色
-                    Microsoft.Win32.SystemEvents.UserPreferenceChanged += SwitchThemeColor;
+                    HookSystemThemeColor(true);
                     SwitchThemeColor(null, null);
                 }
                 else
                 {
+                    HookSystemThemeColor(false);
                     EA.EventAggregator.GetEvent<SendMessageSnackbar>().Publish(Properties.Resources.Options_Tips_RestartApp);
                 }
                 OnPropertyChanged();
@@ -136,8 +141,58 @@ namespace SkyPC_AutoMusic.ViewModel
             }
         }
 
+        //自定义键位开关
+        public bool UseCustomKeyMapper
+        {
+            get { return settings.UseCustomKeyMapper; }
+            set
+            {
+                settings.UseCustomKeyMapper = value;
+                OnPropertyChanged();
+                Save();
+            }
+        }
+
+        //递归导入子文件夹
+        public bool ImportSubfolders
+        {
+            get { return settings.ImportSubfolders; }
+            set
+            {
+                settings.ImportSubfolders = value;
+                OnPropertyChanged();
+                Save();
+            }
+        }
+
+        //全局热键
+        public bool UseHotkeys
+        {
+            get { return settings.UseHotkeys; }
+            set
+            {
+                settings.UseHotkeys = value;
+                EA.EventAggregator.GetEvent<SwitchHotkeysEvent>().Publish(value);
+                if (value)
+                    EA.EventAggregator.GetEvent<SendMessageSnackbar>().Publish(Properties.Resources.Options_Tips_Hotkeys);
+                OnPropertyChanged();
+                Save();
+            }
+        }
+
+        //版本号（从程序集读取，避免写死在界面里）
+        public string VersionText
+        {
+            get
+            {
+                Version version = Assembly.GetExecutingAssembly().GetName().Version;
+                return "Version " + version.ToString(3);
+            }
+        }
+
         public DelegateCommand OpenWebPageCommand { get; set; }
         public DelegateCommand LanguageChangedCommand { get; set; }
+        public DelegateCommand OpenKeybindCommand { get; set; }
 
         public OptionsViewModel(ComboBox languageComboBox)
         {
@@ -157,6 +212,7 @@ namespace SkyPC_AutoMusic.ViewModel
             //命令绑定
             OpenWebPageCommand = new DelegateCommand(OpenWebPage);
             LanguageChangedCommand = new DelegateCommand(LanguageComboBoxChanged);
+            OpenKeybindCommand = new DelegateCommand(OpenKeybindDialog);
             EA.EventAggregator.GetEvent<SaveFolderPathEvent>().Subscribe(SaveFolderPath);
             //应用读取的设置
             ApplyAllOptions();
@@ -166,7 +222,7 @@ namespace SkyPC_AutoMusic.ViewModel
         private void Read()
         {
             //读取首选项
-            string filePath = "settings.xml";
+            string filePath = AppPath.Settings;
             if (File.Exists(filePath))//存在则直接读取
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(Settings));
@@ -174,7 +230,9 @@ namespace SkyPC_AutoMusic.ViewModel
                 {
                     using (StreamReader reader = new StreamReader(filePath))
                     {
-                        settings = (Settings)(serializer.Deserialize(reader));
+                        //反序列化出来的新对象，拷进单例里，保持单例不变
+                        Settings loaded = (Settings)serializer.Deserialize(reader);
+                        CopyInto(settings, loaded);
                     }
                 }
                 catch
@@ -185,14 +243,32 @@ namespace SkyPC_AutoMusic.ViewModel
             }
         }
 
+        //把读出来的设置逐项拷进单例
+        private static void CopyInto(Settings target, Settings source)
+        {
+            if (source == null)
+                return;
+
+            target.FolderPath = source.FolderPath;
+            target.LanguageCode = source.LanguageCode;
+            target.DarkTheme = source.DarkTheme;
+            target.ThemeColorFollowSystem = source.ThemeColorFollowSystem;
+            target.UserImageBackground = source.UserImageBackground;
+            target.DelayToReleaseKey = source.DelayToReleaseKey;
+            target.isPlayInBackground = source.isPlayInBackground;
+            target.isUsingSkyStudioKeyMapper = source.isUsingSkyStudioKeyMapper;
+            target.SheetPaths = source.SheetPaths;
+            target.ImportSubfolders = source.ImportSubfolders;
+            target.UseCustomKeyMapper = source.UseCustomKeyMapper;
+            target.CustomKeys = source.CustomKeys;
+            target.UseHotkeys = source.UseHotkeys;
+            target.PlaylistInitialized = source.PlaylistInitialized;
+        }
+
         //保存设置
         private void Save()
 		{
-            XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-            using (StreamWriter writer = new StreamWriter("settings.xml"))
-            {
-                serializer.Serialize(writer, settings);
-            }
+            Settings.Save();
         }
 
         //主题色
@@ -202,6 +278,21 @@ namespace SkyPC_AutoMusic.ViewModel
             ITheme theme = palette.GetTheme();
             theme.SetPrimaryColor(((SolidColorBrush)SystemParameters.WindowGlassBrush).Color);
             palette.SetTheme(theme);
+        }
+
+        //挂/摘系统主题色监听，避免反复叠加
+        private void HookSystemThemeColor(bool hook)
+        {
+            if (hook && !themeEventHooked)
+            {
+                Microsoft.Win32.SystemEvents.UserPreferenceChanged += SwitchThemeColor;
+                themeEventHooked = true;
+            }
+            else if (!hook && themeEventHooked)
+            {
+                Microsoft.Win32.SystemEvents.UserPreferenceChanged -= SwitchThemeColor;
+                themeEventHooked = false;
+            }
         }
 
         //将乐谱文件夹写入设置
@@ -230,8 +321,12 @@ namespace SkyPC_AutoMusic.ViewModel
             //系统接管主题色
             if(ThemeColorFollowSystem)
             {
-                Microsoft.Win32.SystemEvents.UserPreferenceChanged += SwitchThemeColor;
+                HookSystemThemeColor(true);
                 SwitchThemeColor(null, null);
+            }
+            else
+            {
+                HookSystemThemeColor(false);
             }
             //初始化键位
             EA.EventAggregator.GetEvent<SwitchSkyStudioKeyMapperEvent>().Publish(IsUsingSkyStudioKeyMapper);
@@ -239,6 +334,8 @@ namespace SkyPC_AutoMusic.ViewModel
             EA.EventAggregator.GetEvent<SwitchDelayToReleaseEvent>().Publish(DelayToReleaseKey);
             //初始化后台演奏
             EA.EventAggregator.GetEvent<SwitchPlayBackgroundEvent>().Publish(IsPlayInBackground);
+            //初始化热键
+            EA.EventAggregator.GetEvent<SwitchHotkeysEvent>().Publish(UseHotkeys);
             //背景图像
             ChangeBackground(UserImageBackground,false);
         }
@@ -256,15 +353,19 @@ namespace SkyPC_AutoMusic.ViewModel
         //切换背景图像
         private void ChangeBackground(bool useBackground,bool sendFailureMessage)
         {
-            bool fileExist;
-            string imgPath = AppDomain.CurrentDomain.BaseDirectory + "bg.jpg";
-            fileExist = File.Exists(imgPath);
-            if (!fileExist)
-                imgPath = AppDomain.CurrentDomain.BaseDirectory + "bg.png";
-            fileExist = File.Exists(imgPath);
+            string imgPath = null;
+            foreach (string candidate in AppPath.BackgroundImages)
+            {
+                if (File.Exists(candidate))
+                {
+                    imgPath = candidate;
+                    break;
+                }
+            }
+
             if (useBackground)//添加背景图片
             {
-                if (fileExist)//图片存在
+                if (imgPath != null)//图片存在
                 {
                     //读取图片
                     BitmapImage bitmap;
@@ -357,6 +458,18 @@ namespace SkyPC_AutoMusic.ViewModel
                 UseShellExecute = true,
                 Verb = "open"
             });
+        }
+
+        //打开自定义键位对话框
+        private void OpenKeybindDialog()
+        {
+            //暂停
+            if (PlayViewModel.Instance != null && PlayViewModel.Instance.IsPlaying())
+            {
+                EA.EventAggregator.GetEvent<PauseSongEvent>().Publish();
+            }
+            DialogHost.Show(new SkyPC_AutoMusic.View.UserControlKeybindDialog(), "RootDialog");
+            MainWindow.Instance.Activate();
         }
 
         //切换语言

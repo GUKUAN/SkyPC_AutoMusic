@@ -270,11 +270,14 @@
     <Compile Include="Event\SongSwitchEvent.cs" />
     <Compile Include="Event\SongSwitchWithIndexEvent.cs" />
     <Compile Include="Event\AddBackgroundEvent.cs" />
+    <Compile Include="Event\AddFilesEvent.cs" />
     <Compile Include="Event\Options\SwitchSkyStudioKeyMapperEvent.cs" />
+    <Compile Include="Event\Options\SwitchHotkeysEvent.cs" />
     <Compile Include="Event\SynchronizeDetailedTitleBarEvent.cs" />
     <Compile Include="Event\WindowCloseEvent.cs" />
     <Compile Include="Event\WindowExpandEvent.cs" />
     <Compile Include="Event\WindowMinimizeEvent.cs" />
+    <Compile Include="Model\AppPath.cs" />
     <Compile Include="Model\LanguageItem.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Settings.cs" />
@@ -287,6 +290,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="ViewModel\FilterDialogViewModel.cs" />
+    <Compile Include="ViewModel\KeybindDialogViewModel.cs" />
     <Compile Include="ViewModel\ListViewModel.cs" />
     <Compile Include="ViewModel\NotificationObject.cs" />
     <Compile Include="ViewModel\OptionsViewModel.cs" />
@@ -297,6 +301,9 @@
     <Compile Include="ViewModel\WaitDialogViewModel.cs" />
     <Compile Include="View\UserControlFilterDialog.xaml.cs">
       <DependentUpon>UserControlFilterDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControlKeybindDialog.xaml.cs">
+      <DependentUpon>UserControlKeybindDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UserControlList.xaml.cs">
       <DependentUpon>UserControlList.xaml</DependentUpon>
@@ -336,6 +343,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\UserControlFilterDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserControlKeybindDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

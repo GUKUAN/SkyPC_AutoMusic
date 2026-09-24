@@ -68,6 +68,7 @@ namespace SkyPC_AutoMusic.ViewModel
             EA.EventAggregator.GetEvent<SongSwitchEvent>().Subscribe(SwitchCurrentSong);
             EA.EventAggregator.GetEvent<SelectFolderWithPathEvent>().Subscribe(AutoSelectFolder);
             EA.EventAggregator.GetEvent<SetFilterEvent>().Subscribe(SetFilter);
+            EA.EventAggregator.GetEvent<AddFilesEvent>().Subscribe(ImportDroppedFiles);
             //公开属性
             sheetList = new ObservableCollection<Song>();
             //命令
@@ -77,6 +78,8 @@ namespace SkyPC_AutoMusic.ViewModel
             AddSongCommand = new DelegateCommand(AddSong);
             FilterDialogCommand = new DelegateCommand(OpenFilterDialog);
             SheetList.CollectionChanged += (sender, e) => { OnPropertyChanged("HeaderText"); };
+            //恢复上次导入的播放列表
+            RestorePlaylist();
         }
 
         #region 私有方法
@@ -107,6 +110,11 @@ namespace SkyPC_AutoMusic.ViewModel
 
         private void SwitchCurrentSong(Player player)
         {
+            if (sheetList.Count == 0)//列表空了就别切了
+                return;
+            if (player.currentSheetIndex < 0 || player.currentSheetIndex >= sheetList.Count)
+                return;
+
             //切歌
             player.currentSong = sheetList[player.currentSheetIndex];
             //更新标题
@@ -116,7 +124,7 @@ namespace SkyPC_AutoMusic.ViewModel
         private void SelectFolder()
         {
             //暂停
-            if (PlayViewModel.Instance.IsPlaying())
+            if (PlayViewModel.Instance != null && PlayViewModel.Instance.IsPlaying())
             {
                 EA.EventAggregator.GetEvent<PauseSongEvent>().Publish();
             }
@@ -129,16 +137,34 @@ namespace SkyPC_AutoMusic.ViewModel
             }
         }
 
-        private void ReadSheetsFromFolder(string folderPath,bool showDialog)
+        private void ReadSheetsFromFolder(string folderPath, bool showDialog)
         {
             //清理列表
             sheetList.Clear();
+            //按设置决定是否递归子文件夹
+            SearchOption option = Settings.Instance.ImportSubfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+            List<string> files;
+            try
+            {
+                files = Directory.GetFiles(folderPath, "*", option).ToList();
+            }
+            catch (Exception e)
+            {
+                SendDialog.MessageTips(e.Message);
+                //启用列表视图
+                EA.EventAggregator.GetEvent<EnableListEvent>().Publish(true);
+                return;
+            }
+            ImportFiles(files, showDialog, true);
+        }
+
+        //把一批文件导入到列表里
+        private void ImportFiles(List<string> files, bool showDialog, bool announce)
+        {
             //反馈信息
             int successCount = 0;
             int failCount = 0;
-            string infoFeedback = String.Empty;
             string failureList = String.Empty;
-            string[] files = Directory.GetFiles(folderPath);
             int total = 0;
             int totalCount = files.Count(file => Path.GetExtension(file).ToLower() == ".txt");
             //禁用列表视图
@@ -146,8 +172,11 @@ namespace SkyPC_AutoMusic.ViewModel
             //没有可导入文件时直接返回
             if (totalCount == 0)
             {
-                infoFeedback = string.Format(Properties.Resources.List_ImportResult, successCount, failCount);
-                SendDialog.MessageTips(infoFeedback);
+                string infoEmpty = string.Format(Properties.Resources.List_ImportResult, successCount, failCount);
+                if (announce)
+                {
+                    SendDialog.MessageTips(infoEmpty);
+                }
                 //启用列表视图
                 EA.EventAggregator.GetEvent<EnableListEvent>().Publish(true);
                 return;
@@ -155,11 +184,11 @@ namespace SkyPC_AutoMusic.ViewModel
             //显示等待框
             if (showDialog)
             {
-                var dialog = SendDialog.WaitTips(Properties.Resources.List_ImportingFiles, totalCount);
+                SendDialog.WaitTips(Properties.Resources.List_ImportingFiles, totalCount);
             }
-            else
+            else if (announce)
             {
-                EA.EventAggregator.GetEvent<SendMessageSnackbar>().Publish(String.Format(Properties.Resources.List_ImportingInBackground,totalCount));
+                EA.EventAggregator.GetEvent<SendMessageSnackbar>().Publish(String.Format(Properties.Resources.List_ImportingInBackground, totalCount));
             }
             Task.Run(() =>
             {
@@ -168,9 +197,10 @@ namespace SkyPC_AutoMusic.ViewModel
                 {
                     if (Path.GetExtension(file).ToLower() == ".txt")
                     {
+                        string error;
                         Song song;
                         //从文件实例化类
-                        song = ReadJson(file);
+                        song = ReadJson(file, out error);
                         if (song != null)//成功
                         {
                             //计数
@@ -187,8 +217,7 @@ namespace SkyPC_AutoMusic.ViewModel
                         else//失败
                         {
                             failCount++;
-                            failureList += ("\n\n" + file);
-
+                            failureList += ("\n\n" + file + "\n" + Properties.Resources.List_ImportFailureReason + ": " + (error ?? String.Empty));
                         }
 
                         total++;
@@ -203,35 +232,70 @@ namespace SkyPC_AutoMusic.ViewModel
                     //启用列表视图
                     EA.EventAggregator.GetEvent<EnableListEvent>().Publish(true);
                     //反馈信息
-                    infoFeedback = string.Format(Properties.Resources.List_ImportResult, successCount, failCount);
-                    if (showDialog)
+                    string infoFeedback = string.Format(Properties.Resources.List_ImportResult, successCount, failCount);
+                    if (showDialog || announce)
                     {
                         if (failCount != 0)
                         {
                             infoFeedback += "\n\n" + Properties.Resources.List_ImportFailureTips + "\n\n" + Properties.Resources.List_ImportFailureList;
                             infoFeedback += failureList;
                         }
-                        SendDialog.MessageTips(infoFeedback);
+                        if (showDialog)
+                        {
+                            SendDialog.MessageTips(infoFeedback);
+                        }
+                        else
+                        {
+                            EA.EventAggregator.GetEvent<SendMessageSnackbar>().Publish(infoFeedback);
+                        }
                     }
-                    else
-                    {
-                        EA.EventAggregator.GetEvent<SendMessageSnackbar>().Publish(infoFeedback);
-                    }
-                    if (sheetList.Count > 0)
-                    {
-                        //传递乐谱数
-                        EA.EventAggregator.GetEvent<PassSheetsCountEvent>().Publish(sheetList.Count);
-                        //切歌
-                        EA.EventAggregator.GetEvent<FolderSwitchEvent>().Publish();
-                    }
-                    
+                    FinishImport();
                 });
             });
-            
         }
 
-        private Song ReadJson(string path)
+        //一次导入结束后的收尾：存盘 + 通知数量/切歌
+        private void FinishImport()
         {
+            SavePlaylist();
+            if (sheetList.Count > 0)
+            {
+                //传递乐谱数
+                EA.EventAggregator.GetEvent<PassSheetsCountEvent>().Publish(sheetList.Count);
+                //切歌
+                EA.EventAggregator.GetEvent<FolderSwitchEvent>().Publish();
+            }
+            else
+            {
+                //列表空了也要同步数量，否则“下一首”会越界
+                EA.EventAggregator.GetEvent<PassSheetsCountEvent>().Publish(0);
+            }
+        }
+
+        //启动时恢复上次的播放列表
+        private void RestorePlaylist()
+        {
+            List<string> paths = Settings.Instance.SheetPaths;
+            if (paths.Count > 0)
+            {
+                ImportFiles(paths.ToList(), false, false);
+            }
+        }
+
+        //把当前列表里的文件路径写入设置
+        private void SavePlaylist()
+        {
+            Settings.Instance.SheetPaths = sheetList
+                .Select(song => song.sourcePath)
+                .Where(path => !String.IsNullOrEmpty(path))
+                .ToList();
+            Settings.Instance.PlaylistInitialized = true;
+            Settings.Save();
+        }
+
+        private Song ReadJson(string path, out string error)
+        {
+            error = null;
             Sheet sheet;
             Song song;
 
@@ -240,8 +304,9 @@ namespace SkyPC_AutoMusic.ViewModel
                 // 读取文件内容  
                 string rawJson = File.ReadAllText(path);
                 // 判断是否加密
-                if (rawJson.Contains("\"isEncrypted\":true"))
+                if (rawJson.Contains("\"isEncrypted\":true") || rawJson.Contains("\"isEncrypted\": true"))
                 {
+                    error = Properties.Resources.List_ImportEncrypted;
                     return null;
                 }
                 // 掐头掐尾
@@ -255,17 +320,24 @@ namespace SkyPC_AutoMusic.ViewModel
                     // 反序列化成C#对象
                     sheet = JsonConvert.DeserializeObject<Sheet>(json);
                     song = ConvertSheetToSong(sheet);
+                    if (song != null)
+                    {
+                        //记录来源路径，方便下次恢复
+                        song.sourcePath = path;
+                    }
 
                     return song;
                 }
                 else
                 {
                     // 读不到Json块
+                    error = Properties.Resources.List_ImportFailureTips;
                     return null;
                 }
             }
             catch (Exception e)
             {
+                error = e.Message;
                 Console.WriteLine(e.Message);
                 return null;
             }
@@ -274,7 +346,7 @@ namespace SkyPC_AutoMusic.ViewModel
         private void AddSong()
         {
             //暂停
-            if (PlayViewModel.Instance.IsPlaying())
+            if (PlayViewModel.Instance != null && PlayViewModel.Instance.IsPlaying())
             {
                 EA.EventAggregator.GetEvent<PauseSongEvent>().Publish();
             }
@@ -286,9 +358,10 @@ namespace SkyPC_AutoMusic.ViewModel
             string infoFeedback = string.Empty;
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+                string error;
                 Song song;
                 //从文件实例化类
-                song = ReadJson(dialog.FileName);
+                song = ReadJson(dialog.FileName, out error);
                 if (song != null)
                 {
                     //添加至列表
@@ -297,7 +370,7 @@ namespace SkyPC_AutoMusic.ViewModel
                 }
                 else
                 {
-                    infoFeedback = Properties.Resources.List_ImportFailure + "\n\n" + Properties.Resources.List_ImportFailureTips;
+                    infoFeedback = Properties.Resources.List_ImportFailure + "\n\n" + (error ?? Properties.Resources.List_ImportFailureTips);
                 }
                 if (sheetList.Count > 0)
                 {
@@ -306,30 +379,72 @@ namespace SkyPC_AutoMusic.ViewModel
                     //切歌
                     EA.EventAggregator.GetEvent<FolderSwitchEvent>().Publish();
                 }
+                SavePlaylist();
                 SendDialog.MessageTips(infoFeedback);
             }
         }
 
+        //拖拽文件导入
+        private void ImportDroppedFiles(string[] paths)
+        {
+            if (paths == null || paths.Length == 0)
+                return;
+            //暂停
+            if (PlayViewModel.Instance != null && PlayViewModel.Instance.IsPlaying())
+            {
+                EA.EventAggregator.GetEvent<PauseSongEvent>().Publish();
+            }
+            ImportFiles(paths.ToList(), false, true);
+        }
+
         private void DeleteSelection()
         {
-            if (SelectedItem != null)
+            if (SelectedItem == null)
             {
-                int songIndex = sheetList.IndexOf(SelectedItem) - 1;
-                SheetList.Remove(SelectedItem);
-                if (songIndex > -1)
-                {
-                    SelectedItem = sheetList[songIndex];
-                    EA.EventAggregator.GetEvent<SongSwitchWithIndexEvent>().Publish(songIndex);
-                }
+                SendDialog.MessageTips(Properties.Resources.List_NullDelete);
+                return;
+            }
+
+            //暂停，避免正播着被删掉
+            if (PlayViewModel.Instance != null && PlayViewModel.Instance.IsPlaying())
+            {
+                EA.EventAggregator.GetEvent<PauseSongEvent>().Publish();
+            }
+
+            int songIndex = sheetList.IndexOf(SelectedItem) - 1;
+            SheetList.Remove(SelectedItem);
+            //同步数量，防止“下一首”越界
+            EA.EventAggregator.GetEvent<PassSheetsCountEvent>().Publish(sheetList.Count);
+
+            if (sheetList.Count == 0)
+            {
+                SelectedItem = null;
+                SavePlaylist();
+                return;
+            }
+
+            if (songIndex > -1)
+            {
+                SelectedItem = sheetList[songIndex];
+                EA.EventAggregator.GetEvent<SongSwitchWithIndexEvent>().Publish(songIndex);
             }
             else
             {
-                SendDialog.MessageTips(Properties.Resources.List_NullDelete);
+                //删的是第一首，切到新的第一首
+                SelectedItem = sheetList[0];
+                EA.EventAggregator.GetEvent<SongSwitchWithIndexEvent>().Publish(0);
             }
+            SavePlaylist();
         }
 
         private void AutoSelectFolder(string folderPath)
         {
+            //播放列表已经初始化过就不再自动扫描旧文件夹
+            if (Settings.Instance.PlaylistInitialized)
+                return;
+            //已经存了播放列表也别扫描，免得把恢复中的列表冲掉
+            if (Settings.Instance.SheetPaths.Count > 0)
+                return;
             ReadSheetsFromFolder(folderPath, false);
         }
 
@@ -429,7 +544,7 @@ namespace SkyPC_AutoMusic.ViewModel
         private void OpenFilterDialog()
         {
             //暂停
-            if(PlayViewModel.Instance.IsPlaying())
+            if(PlayViewModel.Instance != null && PlayViewModel.Instance.IsPlaying())
             {
                 EA.EventAggregator.GetEvent<PauseSongEvent>().Publish();
             }

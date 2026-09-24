@@ -31,7 +31,7 @@
             <!--客户区-->
             <Grid Grid.Row="1">
                 <!--背景-->
-                <Image x:Name="Background" Stretch="Fill"/>
+                <Image x:Name="BgImage" Stretch="Fill"/>
                 <TabControl x:Name="Body" TabStripPlacement="Left" Style="{StaticResource MaterialDesignNavigationRailTabControl}">
                     <!-- 第一个标签 -->
                     <TabItem>

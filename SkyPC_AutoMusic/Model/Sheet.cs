@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SkyPC_AutoMusic.ViewModel
+namespace SkyPC_AutoMusic.Model
 {
     public class Sheet
     {

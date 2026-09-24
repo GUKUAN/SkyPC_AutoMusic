@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using Prism.Events;
 using SkyPC_AutoMusic.Event;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,9 @@ namespace SkyPC_AutoMusic.ViewModel
 
         private IInputElement dialog;
 
+        //订阅凭证，关掉对话框时退订，别让旧的等待框一直挂着
+        private SubscriptionToken progressToken;
+
         public int Progress
         {
             get { return progress; }
@@ -30,6 +34,11 @@ namespace SkyPC_AutoMusic.ViewModel
                     {
                         DialogHost.CloseDialogCommand.Execute(null, dialog);
                     });
+                    if (progressToken != null)
+                    {
+                        EA.EventAggregator.GetEvent<PassProgressToWaitDialogEvent>().Unsubscribe(progressToken);
+                        progressToken = null;
+                    }
                 }
                 OnPropertyChanged();
             }
@@ -49,7 +58,7 @@ namespace SkyPC_AutoMusic.ViewModel
             this.dialog = dialog;
             Total = total;
             progress = 0;
-            EA.EventAggregator.GetEvent<PassProgressToWaitDialogEvent>().Subscribe((num) => { Progress = num; });
+            progressToken = EA.EventAggregator.GetEvent<PassProgressToWaitDialogEvent>().Subscribe((num) => { Progress = num; });
         }
 
         private bool IsTaskComplete()
