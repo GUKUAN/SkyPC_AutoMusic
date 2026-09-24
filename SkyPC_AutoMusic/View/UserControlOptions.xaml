@@ -154,6 +154,9 @@
                     </DockPanel>
                 </materialDesign:Card>
                 <!--标签-->
+                <Label Content="{x:Static loc:Resources.Humanize_Header}" Margin="10,0" FontWeight="Bold"/>
+                <local:UserControlHumanize/>
+                <!--标签-->
                 <Label Content="{x:Static loc:Resources.Main_Market}" Margin="10,0" FontWeight="Bold"/>
                 <!--GitHub Token-->
                 <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">

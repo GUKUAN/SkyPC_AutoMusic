@@ -80,6 +80,8 @@ namespace SkyPC_AutoMusic
                 ApplyHotkeys(hotkeysWanted);
             };
             Closed += (object sender, EventArgs e) => { UnregisterHotkeys(); };
+            //窗口出来后立刻建好列表（此时播放页已就绪），保证市场导入与列表恢复不依赖用户先点哪个页
+            Loaded += (object sender, RoutedEventArgs e) => { ListViewModel.EnsureCreated(); };
         }
 
         

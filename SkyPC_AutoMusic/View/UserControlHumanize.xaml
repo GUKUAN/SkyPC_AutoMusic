@@ -1,0 +1,288 @@
+<UserControl x:Class="SkyPC_AutoMusic.View.UserControlHumanize"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:SkyPC_AutoMusic.View"
+             xmlns:loc="clr-namespace:SkyPC_AutoMusic.Properties"
+             xmlns:model="clr-namespace:SkyPC_AutoMusic.Model"
+             d:DataContext="{d:DesignInstance Type=model:HumanizeSettings}"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="560" d:Background="#FFE5E5E5">
+    <StackPanel>
+        <!--总开关 + 总强度 + 种子-->
+        <materialDesign:Card Margin="10,4">
+            <StackPanel Margin="8">
+                <DockPanel>
+                    <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding Enabled}" Content="{x:Static loc:Resources.Humanize_Enable}"/>
+                    <materialDesign:PackIcon VerticalAlignment="Center" Kind="AccountHeart" Margin="4,0,8,0"/>
+                    <TextBlock VerticalAlignment="Center" Opacity="0.7" TextWrapping="Wrap" Text="{x:Static loc:Resources.Humanize_Tips}"/>
+                </DockPanel>
+                <Grid Margin="4,10,4,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_Strength}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="2" TickFrequency="0.05" IsSnapToTickEnabled="False" Value="{Binding Strength}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Strength, StringFormat={}{0:0.00}}"/>
+                </Grid>
+                <Grid Margin="4,8,4,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_Seed}"/>
+                    <ComboBox Grid.Column="1" Margin="8,0" SelectedValue="{Binding SeedMode}" SelectedValuePath="Tag">
+                        <ComboBoxItem Content="{x:Static loc:Resources.Humanize_Seed_PerSheet}" Tag="PerSheet"/>
+                        <ComboBoxItem Content="{x:Static loc:Resources.Humanize_Seed_PerPlay}" Tag="PerPlay"/>
+                    </ComboBox>
+                </Grid>
+            </StackPanel>
+        </materialDesign:Card>
+
+        <!--节拍微抖动-->
+        <Expander Margin="10,4" Header="{x:Static loc:Resources.Humanize_Jitter}">
+            <StackPanel Margin="4,6,4,8">
+                <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding JitterEnabled}" Content="{x:Static loc:Resources.Humanize_Enable}"/>
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_JitterMin}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="-100" Maximum="100" Value="{Binding JitterMin}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding JitterMin, StringFormat={}{0:0}}"/>
+                </Grid>
+                <Grid Margin="0,6,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_JitterMax}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="-100" Maximum="100" Value="{Binding JitterMax}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding JitterMax, StringFormat={}{0:0}}"/>
+                </Grid>
+                <Grid Margin="0,6,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_JitterMode}"/>
+                    <ComboBox Grid.Column="1" Margin="8,0" SelectedValue="{Binding JitterMode}" SelectedValuePath="Tag">
+                        <ComboBoxItem Content="{x:Static loc:Resources.Humanize_Dist_Uniform}" Tag="Uniform"/>
+                        <ComboBoxItem Content="{x:Static loc:Resources.Humanize_Dist_Gaussian}" Tag="Gaussian"/>
+                        <ComboBoxItem Content="{x:Static loc:Resources.Humanize_Dist_Triangular}" Tag="Triangular"/>
+                        <ComboBoxItem Content="{x:Static loc:Resources.Humanize_Dist_Early}" Tag="Early"/>
+                        <ComboBoxItem Content="{x:Static loc:Resources.Humanize_Dist_Late}" Tag="Late"/>
+                        <ComboBoxItem Content="{x:Static loc:Resources.Humanize_Dist_Custom}" Tag="Custom"/>
+                    </ComboBox>
+                </Grid>
+                <TextBox Margin="0,6,0,0" Text="{Binding JitterExpr, UpdateSourceTrigger=PropertyChanged}"
+                         materialDesign:HintAssist.Hint="{x:Static loc:Resources.Humanize_JitterExpr}"
+                         Style="{StaticResource MaterialDesignFilledTextBox}"/>
+                <TextBlock Margin="2,4,0,0" FontSize="11" Opacity="0.6" TextWrapping="Wrap" Text="{x:Static loc:Resources.Humanize_JitterExprHint}"/>
+            </StackPanel>
+        </Expander>
+
+        <!--按键时长随机-->
+        <Expander Margin="10,4" Header="{x:Static loc:Resources.Humanize_Hold}">
+            <StackPanel Margin="4,6,4,8">
+                <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding HoldEnabled}" Content="{x:Static loc:Resources.Humanize_Enable}"/>
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_HoldMin}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="-100" Maximum="100" Value="{Binding HoldMin}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding HoldMin, StringFormat={}{0:0}}"/>
+                </Grid>
+                <Grid Margin="0,6,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_HoldMax}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="-100" Maximum="100" Value="{Binding HoldMax}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding HoldMax, StringFormat={}{0:0}}"/>
+                </Grid>
+            </StackPanel>
+        </Expander>
+
+        <!--随机漏音-->
+        <Expander Margin="10,4" Header="{x:Static loc:Resources.Humanize_Drop}">
+            <StackPanel Margin="4,6,4,8">
+                <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding DropEnabled}" Content="{x:Static loc:Resources.Humanize_Enable}"/>
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_DropChance}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="1" TickFrequency="0.01" Value="{Binding DropChance}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding DropChance, StringFormat={}{0:P1}}"/>
+                </Grid>
+            </StackPanel>
+        </Expander>
+
+        <!--随机错音-->
+        <Expander Margin="10,4" Header="{x:Static loc:Resources.Humanize_Wrong}">
+            <StackPanel Margin="4,6,4,8">
+                <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding WrongEnabled}" Content="{x:Static loc:Resources.Humanize_Enable}"/>
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_WrongChance}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="1" TickFrequency="0.01" Value="{Binding WrongChance}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding WrongChance, StringFormat={}{0:P1}}"/>
+                </Grid>
+            </StackPanel>
+        </Expander>
+
+        <!--和弦错峰-->
+        <Expander Margin="10,4" Header="{x:Static loc:Resources.Humanize_Spread}">
+            <StackPanel Margin="4,6,4,8">
+                <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding SpreadEnabled}" Content="{x:Static loc:Resources.Humanize_Enable}"/>
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_SpreadMin}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="80" Value="{Binding SpreadMin}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding SpreadMin, StringFormat={}{0:0}}"/>
+                </Grid>
+                <Grid Margin="0,6,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_SpreadMax}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="80" Value="{Binding SpreadMax}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding SpreadMax, StringFormat={}{0:0}}"/>
+                </Grid>
+            </StackPanel>
+        </Expander>
+
+        <!--速度浮动-->
+        <Expander Margin="10,4" Header="{x:Static loc:Resources.Humanize_Drift}">
+            <StackPanel Margin="4,6,4,8">
+                <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding DriftEnabled}" Content="{x:Static loc:Resources.Humanize_Enable}"/>
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_DriftMin}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="-10" Maximum="10" Value="{Binding DriftMin}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding DriftMin, StringFormat={}{0:0.0}}"/>
+                </Grid>
+                <Grid Margin="0,6,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_DriftMax}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="-10" Maximum="10" Value="{Binding DriftMax}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding DriftMax, StringFormat={}{0:0.0}}"/>
+                </Grid>
+            </StackPanel>
+        </Expander>
+
+        <!--乐句换气-->
+        <Expander Margin="10,4" Header="{x:Static loc:Resources.Humanize_Breath}">
+            <StackPanel Margin="4,6,4,8">
+                <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding BreathEnabled}" Content="{x:Static loc:Resources.Humanize_Enable}"/>
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_BreathChance}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="1" TickFrequency="0.01" Value="{Binding BreathChance}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding BreathChance, StringFormat={}{0:P1}}"/>
+                </Grid>
+                <Grid Margin="0,6,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_BreathMin}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="1000" Value="{Binding BreathMin}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding BreathMin, StringFormat={}{0:0}}"/>
+                </Grid>
+                <Grid Margin="0,6,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_BreathMax}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="1000" Value="{Binding BreathMax}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding BreathMax, StringFormat={}{0:0}}"/>
+                </Grid>
+            </StackPanel>
+        </Expander>
+
+        <!--疲劳感-->
+        <Expander Margin="10,4" Header="{x:Static loc:Resources.Humanize_Fatigue}">
+            <StackPanel Margin="4,6,4,8">
+                <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding FatigueEnabled}" Content="{x:Static loc:Resources.Humanize_Enable}"/>
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_FatigueStart}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="3" TickFrequency="0.05" Value="{Binding FatigueStart}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding FatigueStart, StringFormat={}{0:0.00}}"/>
+                </Grid>
+                <Grid Margin="0,6,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_FatigueEnd}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="3" TickFrequency="0.05" Value="{Binding FatigueEnd}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding FatigueEnd, StringFormat={}{0:0.00}}"/>
+                </Grid>
+            </StackPanel>
+        </Expander>
+
+        <!--随机加花-->
+        <Expander Margin="10,4" Header="{x:Static loc:Resources.Humanize_Grace}">
+            <StackPanel Margin="4,6,4,8">
+                <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding GraceEnabled}" Content="{x:Static loc:Resources.Humanize_Enable}"/>
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Humanize_GraceChance}"/>
+                    <Slider Grid.Column="1" Margin="8,0" Minimum="0" Maximum="0.2" TickFrequency="0.005" Value="{Binding GraceChance}"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding GraceChance, StringFormat={}{0:P2}}"/>
+                </Grid>
+            </StackPanel>
+        </Expander>
+    </StackPanel>
+</UserControl>

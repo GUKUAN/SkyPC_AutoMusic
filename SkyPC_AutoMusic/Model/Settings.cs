@@ -40,6 +40,7 @@ namespace SkyPC_AutoMusic.Model
         private bool useHotkeys;
         private bool playlistInitialized;
         private string gitHubToken;
+        private HumanizeSettings humanize;
 
         //文件夹路径
         public string FolderPath
@@ -154,6 +155,61 @@ namespace SkyPC_AutoMusic.Model
         {
             get { return gitHubToken; }
             set { gitHubToken = value; }
+        }
+
+        //拟人化设置（保持同一实例，界面绑定不失效）
+        public HumanizeSettings Humanize
+        {
+            get
+            {
+                if (humanize == null)
+                    humanize = new HumanizeSettings();
+                return humanize;
+            }
+            set { humanize = value; }
+        }
+
+        //从配置文件读到单例（程序启动时调用，和界面是否打开无关）
+        public static void Load()
+        {
+            if (!File.Exists(AppPath.Settings))
+                return;
+            try
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+                using (StreamReader reader = new StreamReader(AppPath.Settings))
+                {
+                    Settings loaded = (Settings)serializer.Deserialize(reader);
+                    Instance.CopyFrom(loaded);
+                }
+            }
+            catch
+            {
+                //设置文件坏了就当默认值用
+            }
+        }
+
+        //把另一份设置的各项拷进当前单例（保持单例与界面对象不变）
+        public void CopyFrom(Settings source)
+        {
+            if (source == null)
+                return;
+            FolderPath = source.FolderPath;
+            LanguageCode = source.LanguageCode;
+            DarkTheme = source.DarkTheme;
+            ThemeColorFollowSystem = source.ThemeColorFollowSystem;
+            UserImageBackground = source.UserImageBackground;
+            DelayToReleaseKey = source.DelayToReleaseKey;
+            isPlayInBackground = source.isPlayInBackground;
+            isUsingSkyStudioKeyMapper = source.isUsingSkyStudioKeyMapper;
+            SheetPaths = source.SheetPaths;
+            ImportSubfolders = source.ImportSubfolders;
+            UseCustomKeyMapper = source.UseCustomKeyMapper;
+            CustomKeys = source.CustomKeys;
+            UseHotkeys = source.UseHotkeys;
+            PlaylistInitialized = source.PlaylistInitialized;
+            GitHubToken = source.GitHubToken;
+            Humanize.CopyFrom(source.Humanize);
         }
 
         //把当前单例写到配置文件

@@ -120,6 +120,18 @@ namespace SkyPC_AutoMusic.Model
             get { return "x" + (player.SliderSpeedModifier / 10.0).ToString("0.0"); }
         }
 
+        //播放页的拟人化快捷开关（改的是同一份设置）
+        public bool HumanizeEnabled
+        {
+            get { return Settings.Instance.Humanize.Enabled; }
+            set
+            {
+                Settings.Instance.Humanize.Enabled = value;
+                Settings.Save();
+                OnPropertyChanged();
+            }
+        }
+
         //播放模式标签
         public string PlayModeLabel
         {

@@ -387,4 +387,130 @@
   <data name="Options_Tips_Token" xml:space="preserve">
     <value>用于提高市场清单请求限额，留空则为匿名访问</value>
   </data>
+  <data name="Humanize_Header" xml:space="preserve">
+    <value>拟人化</value>
+  </data>
+  <data name="Humanize_Enable" xml:space="preserve">
+    <value>启用拟人化</value>
+  </data>
+  <data name="Humanize_Strength" xml:space="preserve">
+    <value>总强度</value>
+  </data>
+  <data name="Humanize_Seed" xml:space="preserve">
+    <value>随机种子</value>
+  </data>
+  <data name="Humanize_Seed_PerSheet" xml:space="preserve">
+    <value>每谱固定</value>
+  </data>
+  <data name="Humanize_Seed_PerPlay" xml:space="preserve">
+    <value>每次随机</value>
+  </data>
+  <data name="Humanize_Jitter" xml:space="preserve">
+    <value>节拍微抖动</value>
+  </data>
+  <data name="Humanize_JitterMin" xml:space="preserve">
+    <value>偏移下限(ms)</value>
+  </data>
+  <data name="Humanize_JitterMax" xml:space="preserve">
+    <value>偏移上限(ms)</value>
+  </data>
+  <data name="Humanize_JitterMode" xml:space="preserve">
+    <value>随机分布</value>
+  </data>
+  <data name="Humanize_JitterExpr" xml:space="preserve">
+    <value>自定义表达式</value>
+  </data>
+  <data name="Humanize_JitterExprHint" xml:space="preserve">
+    <value>可用变量：r, min, max, beat, count, fatigue, strength；函数：abs/sqrt/sin/cos/floor/ceil/round/min/max/pow/clamp</value>
+  </data>
+  <data name="Humanize_Dist_Uniform" xml:space="preserve">
+    <value>均匀</value>
+  </data>
+  <data name="Humanize_Dist_Gaussian" xml:space="preserve">
+    <value>正态</value>
+  </data>
+  <data name="Humanize_Dist_Triangular" xml:space="preserve">
+    <value>三角</value>
+  </data>
+  <data name="Humanize_Dist_Early" xml:space="preserve">
+    <value>偏早</value>
+  </data>
+  <data name="Humanize_Dist_Late" xml:space="preserve">
+    <value>偏晚</value>
+  </data>
+  <data name="Humanize_Dist_Custom" xml:space="preserve">
+    <value>自定义</value>
+  </data>
+  <data name="Humanize_Hold" xml:space="preserve">
+    <value>按键时长随机</value>
+  </data>
+  <data name="Humanize_HoldMin" xml:space="preserve">
+    <value>时长浮动下限(ms)</value>
+  </data>
+  <data name="Humanize_HoldMax" xml:space="preserve">
+    <value>时长浮动上限(ms)</value>
+  </data>
+  <data name="Humanize_Drop" xml:space="preserve">
+    <value>随机漏音</value>
+  </data>
+  <data name="Humanize_DropChance" xml:space="preserve">
+    <value>漏音概率</value>
+  </data>
+  <data name="Humanize_Wrong" xml:space="preserve">
+    <value>随机错音（邻近键）</value>
+  </data>
+  <data name="Humanize_WrongChance" xml:space="preserve">
+    <value>错音概率</value>
+  </data>
+  <data name="Humanize_Spread" xml:space="preserve">
+    <value>和弦错峰</value>
+  </data>
+  <data name="Humanize_SpreadMin" xml:space="preserve">
+    <value>错峰下限(ms)</value>
+  </data>
+  <data name="Humanize_SpreadMax" xml:space="preserve">
+    <value>错峰上限(ms)</value>
+  </data>
+  <data name="Humanize_Drift" xml:space="preserve">
+    <value>速度轻微浮动</value>
+  </data>
+  <data name="Humanize_DriftMin" xml:space="preserve">
+    <value>浮动下限(%)</value>
+  </data>
+  <data name="Humanize_DriftMax" xml:space="preserve">
+    <value>浮动上限(%)</value>
+  </data>
+  <data name="Humanize_Breath" xml:space="preserve">
+    <value>乐句换气</value>
+  </data>
+  <data name="Humanize_BreathChance" xml:space="preserve">
+    <value>换气概率</value>
+  </data>
+  <data name="Humanize_BreathMin" xml:space="preserve">
+    <value>停顿下限(ms)</value>
+  </data>
+  <data name="Humanize_BreathMax" xml:space="preserve">
+    <value>停顿上限(ms)</value>
+  </data>
+  <data name="Humanize_Fatigue" xml:space="preserve">
+    <value>疲劳感</value>
+  </data>
+  <data name="Humanize_FatigueStart" xml:space="preserve">
+    <value>起始误差倍率</value>
+  </data>
+  <data name="Humanize_FatigueEnd" xml:space="preserve">
+    <value>结束误差倍率</value>
+  </data>
+  <data name="Humanize_Grace" xml:space="preserve">
+    <value>随机加花</value>
+  </data>
+  <data name="Humanize_GraceChance" xml:space="preserve">
+    <value>加花概率</value>
+  </data>
+  <data name="Humanize_Tips" xml:space="preserve">
+    <value>让自动演奏带上真人的误差与呼吸感</value>
+  </data>
+  <data name="Play_Humanize_Toggle" xml:space="preserve">
+    <value>拟人化</value>
+  </data>
 </root>

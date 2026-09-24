@@ -869,5 +869,257 @@ namespace SkyPC_AutoMusic.Properties {
                 return ResourceManager.GetString("Options_Tips_Token", resourceCulture);
             }
         }
+        
+        public static string Humanize_Header {
+            get {
+                return ResourceManager.GetString("Humanize_Header", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Enable {
+            get {
+                return ResourceManager.GetString("Humanize_Enable", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Strength {
+            get {
+                return ResourceManager.GetString("Humanize_Strength", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Seed {
+            get {
+                return ResourceManager.GetString("Humanize_Seed", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Seed_PerSheet {
+            get {
+                return ResourceManager.GetString("Humanize_Seed_PerSheet", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Seed_PerPlay {
+            get {
+                return ResourceManager.GetString("Humanize_Seed_PerPlay", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Jitter {
+            get {
+                return ResourceManager.GetString("Humanize_Jitter", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_JitterMin {
+            get {
+                return ResourceManager.GetString("Humanize_JitterMin", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_JitterMax {
+            get {
+                return ResourceManager.GetString("Humanize_JitterMax", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_JitterMode {
+            get {
+                return ResourceManager.GetString("Humanize_JitterMode", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_JitterExpr {
+            get {
+                return ResourceManager.GetString("Humanize_JitterExpr", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_JitterExprHint {
+            get {
+                return ResourceManager.GetString("Humanize_JitterExprHint", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Dist_Uniform {
+            get {
+                return ResourceManager.GetString("Humanize_Dist_Uniform", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Dist_Gaussian {
+            get {
+                return ResourceManager.GetString("Humanize_Dist_Gaussian", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Dist_Triangular {
+            get {
+                return ResourceManager.GetString("Humanize_Dist_Triangular", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Dist_Early {
+            get {
+                return ResourceManager.GetString("Humanize_Dist_Early", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Dist_Late {
+            get {
+                return ResourceManager.GetString("Humanize_Dist_Late", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Dist_Custom {
+            get {
+                return ResourceManager.GetString("Humanize_Dist_Custom", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Hold {
+            get {
+                return ResourceManager.GetString("Humanize_Hold", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_HoldMin {
+            get {
+                return ResourceManager.GetString("Humanize_HoldMin", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_HoldMax {
+            get {
+                return ResourceManager.GetString("Humanize_HoldMax", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Drop {
+            get {
+                return ResourceManager.GetString("Humanize_Drop", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_DropChance {
+            get {
+                return ResourceManager.GetString("Humanize_DropChance", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Wrong {
+            get {
+                return ResourceManager.GetString("Humanize_Wrong", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_WrongChance {
+            get {
+                return ResourceManager.GetString("Humanize_WrongChance", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Spread {
+            get {
+                return ResourceManager.GetString("Humanize_Spread", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_SpreadMin {
+            get {
+                return ResourceManager.GetString("Humanize_SpreadMin", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_SpreadMax {
+            get {
+                return ResourceManager.GetString("Humanize_SpreadMax", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Drift {
+            get {
+                return ResourceManager.GetString("Humanize_Drift", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_DriftMin {
+            get {
+                return ResourceManager.GetString("Humanize_DriftMin", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_DriftMax {
+            get {
+                return ResourceManager.GetString("Humanize_DriftMax", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Breath {
+            get {
+                return ResourceManager.GetString("Humanize_Breath", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_BreathChance {
+            get {
+                return ResourceManager.GetString("Humanize_BreathChance", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_BreathMin {
+            get {
+                return ResourceManager.GetString("Humanize_BreathMin", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_BreathMax {
+            get {
+                return ResourceManager.GetString("Humanize_BreathMax", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Fatigue {
+            get {
+                return ResourceManager.GetString("Humanize_Fatigue", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_FatigueStart {
+            get {
+                return ResourceManager.GetString("Humanize_FatigueStart", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_FatigueEnd {
+            get {
+                return ResourceManager.GetString("Humanize_FatigueEnd", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Grace {
+            get {
+                return ResourceManager.GetString("Humanize_Grace", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_GraceChance {
+            get {
+                return ResourceManager.GetString("Humanize_GraceChance", resourceCulture);
+            }
+        }
+        
+        public static string Humanize_Tips {
+            get {
+                return ResourceManager.GetString("Humanize_Tips", resourceCulture);
+            }
+        }
+        
+        public static string Play_Humanize_Toggle {
+            get {
+                return ResourceManager.GetString("Play_Humanize_Toggle", resourceCulture);
+            }
+        }
     }
 }

@@ -387,4 +387,130 @@
   <data name="Options_Tips_Token" xml:space="preserve">
     <value>Used to raise the market catalog request limit; leave empty for anonymous access</value>
   </data>
+  <data name="Humanize_Header" xml:space="preserve">
+    <value>Humanize</value>
+  </data>
+  <data name="Humanize_Enable" xml:space="preserve">
+    <value>Enable Humanize</value>
+  </data>
+  <data name="Humanize_Strength" xml:space="preserve">
+    <value>Strength</value>
+  </data>
+  <data name="Humanize_Seed" xml:space="preserve">
+    <value>Random Seed</value>
+  </data>
+  <data name="Humanize_Seed_PerSheet" xml:space="preserve">
+    <value>Per Sheet</value>
+  </data>
+  <data name="Humanize_Seed_PerPlay" xml:space="preserve">
+    <value>Per Play</value>
+  </data>
+  <data name="Humanize_Jitter" xml:space="preserve">
+    <value>Timing Jitter</value>
+  </data>
+  <data name="Humanize_JitterMin" xml:space="preserve">
+    <value>Min Offset (ms)</value>
+  </data>
+  <data name="Humanize_JitterMax" xml:space="preserve">
+    <value>Max Offset (ms)</value>
+  </data>
+  <data name="Humanize_JitterMode" xml:space="preserve">
+    <value>Distribution</value>
+  </data>
+  <data name="Humanize_JitterExpr" xml:space="preserve">
+    <value>Custom Expression</value>
+  </data>
+  <data name="Humanize_JitterExprHint" xml:space="preserve">
+    <value>Variables: r, min, max, beat, count, fatigue, strength; functions: abs/sqrt/sin/cos/floor/ceil/round/min/max/pow/clamp</value>
+  </data>
+  <data name="Humanize_Dist_Uniform" xml:space="preserve">
+    <value>Uniform</value>
+  </data>
+  <data name="Humanize_Dist_Gaussian" xml:space="preserve">
+    <value>Gaussian</value>
+  </data>
+  <data name="Humanize_Dist_Triangular" xml:space="preserve">
+    <value>Triangular</value>
+  </data>
+  <data name="Humanize_Dist_Early" xml:space="preserve">
+    <value>Early</value>
+  </data>
+  <data name="Humanize_Dist_Late" xml:space="preserve">
+    <value>Late</value>
+  </data>
+  <data name="Humanize_Dist_Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="Humanize_Hold" xml:space="preserve">
+    <value>Hold Duration Jitter</value>
+  </data>
+  <data name="Humanize_HoldMin" xml:space="preserve">
+    <value>Min Delta (ms)</value>
+  </data>
+  <data name="Humanize_HoldMax" xml:space="preserve">
+    <value>Max Delta (ms)</value>
+  </data>
+  <data name="Humanize_Drop" xml:space="preserve">
+    <value>Random Note Drop</value>
+  </data>
+  <data name="Humanize_DropChance" xml:space="preserve">
+    <value>Drop Chance</value>
+  </data>
+  <data name="Humanize_Wrong" xml:space="preserve">
+    <value>Random Wrong Note</value>
+  </data>
+  <data name="Humanize_WrongChance" xml:space="preserve">
+    <value>Wrong Chance</value>
+  </data>
+  <data name="Humanize_Spread" xml:space="preserve">
+    <value>Chord Spread</value>
+  </data>
+  <data name="Humanize_SpreadMin" xml:space="preserve">
+    <value>Min Spread (ms)</value>
+  </data>
+  <data name="Humanize_SpreadMax" xml:space="preserve">
+    <value>Max Spread (ms)</value>
+  </data>
+  <data name="Humanize_Drift" xml:space="preserve">
+    <value>Tempo Drift</value>
+  </data>
+  <data name="Humanize_DriftMin" xml:space="preserve">
+    <value>Min Drift (%)</value>
+  </data>
+  <data name="Humanize_DriftMax" xml:space="preserve">
+    <value>Max Drift (%)</value>
+  </data>
+  <data name="Humanize_Breath" xml:space="preserve">
+    <value>Breath Pause</value>
+  </data>
+  <data name="Humanize_BreathChance" xml:space="preserve">
+    <value>Breath Chance</value>
+  </data>
+  <data name="Humanize_BreathMin" xml:space="preserve">
+    <value>Min Pause (ms)</value>
+  </data>
+  <data name="Humanize_BreathMax" xml:space="preserve">
+    <value>Max Pause (ms)</value>
+  </data>
+  <data name="Humanize_Fatigue" xml:space="preserve">
+    <value>Fatigue</value>
+  </data>
+  <data name="Humanize_FatigueStart" xml:space="preserve">
+    <value>Start Factor</value>
+  </data>
+  <data name="Humanize_FatigueEnd" xml:space="preserve">
+    <value>End Factor</value>
+  </data>
+  <data name="Humanize_Grace" xml:space="preserve">
+    <value>Random Grace Notes</value>
+  </data>
+  <data name="Humanize_GraceChance" xml:space="preserve">
+    <value>Grace Chance</value>
+  </data>
+  <data name="Humanize_Tips" xml:space="preserve">
+    <value>Give auto-play a human touch of error and breathing</value>
+  </data>
+  <data name="Play_Humanize_Toggle" xml:space="preserve">
+    <value>Humanize</value>
+  </data>
 </root>

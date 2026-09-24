@@ -27,7 +27,7 @@ namespace SkyPC_AutoMusic.View
         {
             InitializeComponent();
             EA.EventAggregator.GetEvent<EnableListEvent>().Subscribe(value => { IsEnabled = value; });
-            DataContext = new ListViewModel(SheetsListView);
+            DataContext = ListViewModel.Instance;
         }
 
     }

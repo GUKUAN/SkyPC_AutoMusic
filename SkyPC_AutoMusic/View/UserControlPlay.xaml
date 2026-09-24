@@ -40,6 +40,7 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Width="120" VerticalContentAlignment="Top" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}" Command="{Binding SwitchModeCommand}" Content="{Binding PlayModeLabel}" Cursor="Hand"/>
                 <Label Content="{Binding SpeedLabel}" VerticalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                <ToggleButton Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="{Binding HumanizeEnabled}" Content="{x:Static loc:Resources.Play_Humanize_Toggle}"/>
             </StackPanel>
         </StackPanel>
 

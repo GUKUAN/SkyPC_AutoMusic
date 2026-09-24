@@ -6,14 +6,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using System.Xml.Serialization;
 
 namespace SkyPC_AutoMusic
 {
@@ -51,34 +49,23 @@ namespace SkyPC_AutoMusic
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            //读取语言
-            XmlSerializer serializer = new XmlSerializer(typeof(Model.Settings));
-            try
+            //先把设置读进来（不依赖界面是否打开）
+            SkyPC_AutoMusic.Model.Settings.Load();
+            //再按语言设置界面文化
+            switch (SkyPC_AutoMusic.Model.Settings.Instance.LanguageCode)
             {
-                using (StreamReader reader = new StreamReader(AppPath.Settings))
-                {
-                    string code = ((Model.Settings)(serializer.Deserialize(reader))).LanguageCode;
-                    switch (code)
-                    {
-                        case "zh-CN":
-                            //中文
-                            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("zh-CN");
-                            break;
-                        case "en-US":
-                            //英语
-                            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
-                            break;
-                        default:
-                            //自动
-                            break;
-                    }
-                }
+                case "zh-CN":
+                    //中文
+                    Thread.CurrentThread.CurrentUICulture = new CultureInfo("zh-CN");
+                    break;
+                case "en-US":
+                    //英语
+                    Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+                    break;
+                default:
+                    //自动
+                    break;
             }
-            catch
-            {
-                //设置文件读取失败
-            }
-         
         }
 
     }

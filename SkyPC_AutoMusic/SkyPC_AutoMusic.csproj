@@ -281,6 +281,9 @@
     <Compile Include="Model\MarketCatalog.cs" />
     <Compile Include="Model\MarketItem.cs" />
     <Compile Include="Model\SheetParser.cs" />
+    <Compile Include="Model\HumanizeExpression.cs" />
+    <Compile Include="Model\HumanizeSettings.cs" />
+    <Compile Include="Model\Humanizer.cs" />
     <Compile Include="Model\LanguageItem.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Settings.cs" />
@@ -311,6 +314,9 @@
     </Compile>
     <Compile Include="View\UserControlMarket.xaml.cs">
       <DependentUpon>UserControlMarket.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControlHumanize.xaml.cs">
+      <DependentUpon>UserControlHumanize.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UserControlList.xaml.cs">
       <DependentUpon>UserControlList.xaml</DependentUpon>
@@ -358,6 +364,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\UserControlMarket.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserControlHumanize.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

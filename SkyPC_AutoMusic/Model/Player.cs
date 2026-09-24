@@ -169,6 +169,8 @@ namespace SkyPC_AutoMusic.Model
         //后台播放
         private bool isPlayBackground;
         private IntPtr hWnd;
+        //拟人化
+        private Humanizer humanizer;
 
         // 播放完的行为
         Action playEndAction;
@@ -200,6 +202,7 @@ namespace SkyPC_AutoMusic.Model
             currentBeatIndex = 0;
             isPlayEnd = false;
             startPlay = DateTime.Now;
+            humanizer = null;//重新开始，按种子重新生成
             totalTimeProgress = currentSong.Beats[currentSong.Beats.Count - 1].Time;
         }
 
@@ -315,14 +318,15 @@ namespace SkyPC_AutoMusic.Model
                         {
                             //播放完毕
                             isStop = true;
+                            ReleaseAllSoundingKeys();
                             playEndAction();
                             break;
                         }
 
                         if (isStop)
                         {
-                            //手动暂停：把上一个节拍按住的键松开，避免卡键
-                            ReleaseBeatKeys(currentBeatIndex - 1);
+                            //手动暂停：把所有键都松开，避免卡键
+                            ReleaseAllSoundingKeys();
                             break;
                         }
 
@@ -338,18 +342,36 @@ namespace SkyPC_AutoMusic.Model
             });
         }
 
-        //松开指定节拍上按下的所有键
-        private void ReleaseBeatKeys(int beatIndex)
+        //松开所有正在发声的键（拟人化可能改过音，直接全抬最稳）
+        private void ReleaseAllSoundingKeys()
         {
-            if (currentSong == null || currentSong.Beats == null)
+            for (int i = 0; i < 15; i++)
+            {
+                SendKey((NoteKey)i, false);
+            }
+        }
+
+        //按设置准备拟人化处理器
+        private void EnsureHumanizer()
+        {
+            HumanizeSettings humanize = Settings.Instance.Humanize;
+            if (!humanize.Enabled)
+            {
+                humanizer = null;
                 return;
-            if (beatIndex < 0 || beatIndex >= currentSong.Beats.Count)
+            }
+            if (humanizer != null)
                 return;
 
-            foreach (NoteKey key in currentSong.Beats[beatIndex].Keys)
-            {
-                SendKey(key, false);
-            }
+            int seedBase;
+            if (humanize.SeedMode == "PerPlay")
+                seedBase = Environment.TickCount ^ Guid.NewGuid().GetHashCode();
+            else if (currentSong.sourcePath != null)
+                seedBase = currentSong.sourcePath.GetHashCode();
+            else
+                seedBase = currentSong.name != null ? currentSong.name.GetHashCode() : 0;
+
+            humanizer = new Humanizer(humanize, seedBase, currentSong.Beats.Count);
         }
 
         //返回是否已经处理了当前节拍
@@ -360,24 +382,71 @@ namespace SkyPC_AutoMusic.Model
             if (currentSong == null || currentSong.Beats == null || beatIndex >= currentSong.Beats.Count)
                 return true;
 
-            //读取按键
-            List<NoteKey> keys = currentSong.Beats[beatIndex].Keys;
-
-            //判断时间
+            //读取按键与时间
+            List<NoteKey> sourceKeys = currentSong.Beats[beatIndex].Keys;
             int time = currentSong.Beats[beatIndex].Time;
-            bool flag = DateTime.Now > startPlay.AddMilliseconds(time / speedModifier);
+
+            //判断时间（叠加拟人化的抖动/漂移）
+            EnsureHumanizer();
+            double offset = humanizer != null ? humanizer.TriggerOffset(beatIndex, time) : 0;
+            bool flag = DateTime.Now > startPlay.AddMilliseconds(time / speedModifier + offset);
 
             if (!flag)
                 return false;
 
-            //按下
-            foreach (NoteKey key in keys)
+            //空拍：可能插入换气停顿，并把时间轴往后推
+            if (sourceKeys.Count == 0)
             {
-                SendKey(key, true);
+                if (humanizer != null)
+                {
+                    double pause = humanizer.Breath(beatIndex);
+                    if (pause > 0)
+                        startPlay = startPlay.AddMilliseconds(pause);
+                }
+                currentBeatIndex++;
+                return true;
             }
 
-            //等待
-            Thread.Sleep(durationTime);
+            //漏音/错音处理
+            List<NoteKey> keys = humanizer != null ? humanizer.ProcessKeys(sourceKeys, beatIndex) : sourceKeys;
+            if (keys.Count == 0)
+            {
+                currentBeatIndex++;
+                return true;
+            }
+
+            int hold = humanizer != null ? humanizer.Hold(beatIndex, durationTime) : durationTime;
+            int[] spread = humanizer != null ? humanizer.Spread(keys.Count, beatIndex) : null;
+
+            //按下（多音带错峰）
+            int staggered = 0;
+            for (int i = 0; i < keys.Count; i++)
+            {
+                SendKey(keys[i], true);
+                if (spread != null && i < keys.Count - 1)
+                {
+                    int gap = spread[i];
+                    if (gap > 0)
+                    {
+                        Thread.Sleep(gap);
+                        staggered += gap;
+                    }
+                }
+            }
+
+            //偶尔加花
+            NoteKey graceKey;
+            if (humanizer != null && humanizer.TryGrace(beatIndex, out graceKey))
+            {
+                SendKey(graceKey, true);
+                Thread.Sleep(20);
+                SendKey(graceKey, false);
+            }
+
+            //保持
+            int remain = hold - staggered;
+            if (remain > 0)
+                Thread.Sleep(remain);
 
             //抬起
             foreach (NoteKey key in keys)

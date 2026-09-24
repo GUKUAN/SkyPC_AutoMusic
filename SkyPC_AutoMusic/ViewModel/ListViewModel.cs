@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Newtonsoft;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using Prism.Events;
 using SkyPC_AutoMusic.Event;
 using SkyPC_AutoMusic.Model;
@@ -19,14 +20,34 @@ using SkyPC_AutoMusic.View;
 using System.Diagnostics;
 using System.Windows.Threading;
 using System.Windows;
+using System.Windows.Data;
 using System.Threading;
 
 namespace SkyPC_AutoMusic.ViewModel
 {
     internal class ListViewModel : NotificationObject
     {
+        //单例：不依赖“乐谱页”是否被打开，市场和列表恢复都能用
+        private static ListViewModel instance;
+
+        public static ListViewModel Instance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new ListViewModel();
+                return instance;
+            }
+        }
+
+        //在窗口就绪时提前建好，别等问题发生
+        public static void EnsureCreated()
+        {
+            if (instance == null)
+                instance = new ListViewModel();
+        }
+
         private string filterText = String.Empty;
-        private System.Windows.Controls.ListView listView;
 
         #region 公开属性
 
@@ -61,9 +82,8 @@ namespace SkyPC_AutoMusic.ViewModel
         public DelegateCommand FilterDialogCommand { get; set; }
         #endregion
 
-        public ListViewModel(System.Windows.Controls.ListView listView)
+        private ListViewModel()
         {
-            this.listView = listView;
             //私有变量
             EA.EventAggregator.GetEvent<SongSwitchEvent>().Subscribe(SwitchCurrentSong);
             EA.EventAggregator.GetEvent<SelectFolderWithPathEvent>().Subscribe(AutoSelectFolder);
@@ -87,7 +107,10 @@ namespace SkyPC_AutoMusic.ViewModel
         private void SetFilter(string filterString)
         {
             filterText = filterString;
-            listView.Items.Filter = FilterMethod;
+            //直接给列表的默认视图设过滤，不再依赖 ListView 控件
+            ICollectionView view = CollectionViewSource.GetDefaultView(sheetList);
+            view.Filter = FilterMethod;
+            view.Refresh();
         }
 
         private bool FilterMethod(object obj)

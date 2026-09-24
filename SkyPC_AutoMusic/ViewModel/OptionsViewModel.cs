@@ -22,8 +22,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Xml;
-using System.Xml.Serialization;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 namespace SkyPC_AutoMusic.ViewModel
@@ -230,52 +228,10 @@ namespace SkyPC_AutoMusic.ViewModel
             ApplyAllOptions();
         }
 
-        //读取设置
+        //读取设置（启动时已统一加载，这里再同步一次，保证单例最新）
         private void Read()
         {
-            //读取首选项
-            string filePath = AppPath.Settings;
-            if (File.Exists(filePath))//存在则直接读取
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-                try
-                {
-                    using (StreamReader reader = new StreamReader(filePath))
-                    {
-                        //反序列化出来的新对象，拷进单例里，保持单例不变
-                        Settings loaded = (Settings)serializer.Deserialize(reader);
-                        CopyInto(settings, loaded);
-                    }
-                }
-                catch
-                {
-                    Save();
-                    EA.EventAggregator.GetEvent<SendMessageSnackbar>().Publish(Properties.Resources.Options_ReadConfigFailure);
-                }
-            }
-        }
-
-        //把读出来的设置逐项拷进单例
-        private static void CopyInto(Settings target, Settings source)
-        {
-            if (source == null)
-                return;
-
-            target.FolderPath = source.FolderPath;
-            target.LanguageCode = source.LanguageCode;
-            target.DarkTheme = source.DarkTheme;
-            target.ThemeColorFollowSystem = source.ThemeColorFollowSystem;
-            target.UserImageBackground = source.UserImageBackground;
-            target.DelayToReleaseKey = source.DelayToReleaseKey;
-            target.isPlayInBackground = source.isPlayInBackground;
-            target.isUsingSkyStudioKeyMapper = source.isUsingSkyStudioKeyMapper;
-            target.SheetPaths = source.SheetPaths;
-            target.ImportSubfolders = source.ImportSubfolders;
-            target.UseCustomKeyMapper = source.UseCustomKeyMapper;
-            target.CustomKeys = source.CustomKeys;
-            target.UseHotkeys = source.UseHotkeys;
-            target.PlaylistInitialized = source.PlaylistInitialized;
-            target.GitHubToken = source.GitHubToken;
+            Settings.Load();
         }
 
         //保存设置
