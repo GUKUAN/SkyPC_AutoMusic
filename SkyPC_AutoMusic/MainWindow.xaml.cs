@@ -128,6 +128,8 @@ namespace SkyPC_AutoMusic
             }
             else
             {
+                //收起前记住当前高度，展开时好还原（含用户手动缩放后的高度）
+                originalHeight = Height;
                 Height = TitleBar.ActualHeight;
 
                 //DoubleAnimation animation = new DoubleAnimation();

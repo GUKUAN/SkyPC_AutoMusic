@@ -9,9 +9,10 @@
         xmlns:loc="clr-namespace:SkyPC_AutoMusic.Properties"
         mc:Ignorable="d"
         Topmost="True"
-        ResizeMode="CanMinimize"
+        ResizeMode="CanResize"
+        MinHeight="200" MinWidth="440"
         Background="{x:Null}"
-        Title="{x:Static loc:Resources.Main_WindowTitle}" Height="300" Width="500">
+        Title="{x:Static loc:Resources.Main_WindowTitle}" Height="440" Width="560">
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="-1" CaptionHeight="0" UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
