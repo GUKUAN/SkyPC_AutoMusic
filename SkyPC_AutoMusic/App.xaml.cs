@@ -66,6 +66,9 @@ namespace SkyPC_AutoMusic
                     //自动
                     break;
             }
+            //初始化主题系统并应用上次选择
+            SkyPC_AutoMusic.Theme.Themes.SetCurrent(SkyPC_AutoMusic.Model.Settings.Instance.ThemeId);
+            SkyPC_AutoMusic.Theme.ThemeService.Initialize();
         }
 
     }

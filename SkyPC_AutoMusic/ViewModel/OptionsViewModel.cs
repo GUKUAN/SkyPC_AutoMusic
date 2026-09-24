@@ -1,6 +1,4 @@
-﻿using MaterialDesignColors;
-using MaterialDesignThemes.Wpf;
-using Newtonsoft.Json.Linq;
+﻿using MaterialDesignThemes.Wpf;
 using SkyPC_AutoMusic.Command;
 using SkyPC_AutoMusic.Event;
 using SkyPC_AutoMusic.Event.Options;
@@ -8,21 +6,18 @@ using SkyPC_AutoMusic.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
+using AppTheme = SkyPC_AutoMusic.Theme;
 
 namespace SkyPC_AutoMusic.ViewModel
 {
@@ -33,9 +28,6 @@ namespace SkyPC_AutoMusic.ViewModel
         private Settings settings;
 
         private ComboBox LanguageComboBox;
-
-        //是否已经挂上系统主题色的监听
-        private bool themeEventHooked;
 
         //乐谱文件夹路径
         public string FolderPath
@@ -49,37 +41,23 @@ namespace SkyPC_AutoMusic.ViewModel
             }
         }
 
-        //深色模式
-        public bool DarkTheme
-		{
-			get { return settings.DarkTheme; }
-			set 
-            { 
-                settings.DarkTheme = value;
-                ToggleDarkMode(value);
-                OnPropertyChanged();
-                Save();
-            }
-		}
-
-        //主题色跟随系统
-        public bool ThemeColorFollowSystem
+        //预设主题列表
+        public List<AppTheme.ThemeEntry> ThemeList
         {
-            get { return settings.ThemeColorFollowSystem; }
+            get { return AppTheme.Themes.Presets.ToList(); }
+        }
+
+        //当前主题
+        public AppTheme.ThemeEntry SelectedTheme
+        {
+            get { return AppTheme.Themes.Current; }
             set
             {
-                settings.ThemeColorFollowSystem = value;
-                if (value)
-                {
-                    //系统接管主题色
-                    HookSystemThemeColor(true);
-                    SwitchThemeColor(null, null);
-                }
-                else
-                {
-                    HookSystemThemeColor(false);
-                    EA.EventAggregator.GetEvent<SendMessageSnackbar>().Publish(Properties.Resources.Options_Tips_RestartApp);
-                }
+                if (value == null)
+                    return;
+                AppTheme.Themes.SetCurrent(value.Id);
+                AppTheme.ThemeService.ApplyCurrent(true);
+                settings.ThemeId = value.Id;
                 OnPropertyChanged();
                 Save();
             }
@@ -236,32 +214,8 @@ namespace SkyPC_AutoMusic.ViewModel
 
         //保存设置
         private void Save()
-		{
+        {
             Settings.Save();
-        }
-
-        //主题色
-        private void SwitchThemeColor(object sender, Microsoft.Win32.UserPreferenceChangedEventArgs e)
-        {
-            var palette = new PaletteHelper();
-            ITheme theme = palette.GetTheme();
-            theme.SetPrimaryColor(((SolidColorBrush)SystemParameters.WindowGlassBrush).Color);
-            palette.SetTheme(theme);
-        }
-
-        //挂/摘系统主题色监听，避免反复叠加
-        private void HookSystemThemeColor(bool hook)
-        {
-            if (hook && !themeEventHooked)
-            {
-                Microsoft.Win32.SystemEvents.UserPreferenceChanged += SwitchThemeColor;
-                themeEventHooked = true;
-            }
-            else if (!hook && themeEventHooked)
-            {
-                Microsoft.Win32.SystemEvents.UserPreferenceChanged -= SwitchThemeColor;
-                themeEventHooked = false;
-            }
         }
 
         //将乐谱文件夹写入设置
@@ -285,18 +239,6 @@ namespace SkyPC_AutoMusic.ViewModel
                     EA.EventAggregator.GetEvent<SendMessageSnackbar>().Publish(Properties.Resources.Options_ReadPathFailure);
                 }
             }
-            //深色模式
-            ToggleDarkMode(DarkTheme);
-            //系统接管主题色
-            if(ThemeColorFollowSystem)
-            {
-                HookSystemThemeColor(true);
-                SwitchThemeColor(null, null);
-            }
-            else
-            {
-                HookSystemThemeColor(false);
-            }
             //初始化键位
             EA.EventAggregator.GetEvent<SwitchSkyStudioKeyMapperEvent>().Publish(IsUsingSkyStudioKeyMapper);
             //初始化延音
@@ -307,16 +249,6 @@ namespace SkyPC_AutoMusic.ViewModel
             EA.EventAggregator.GetEvent<SwitchHotkeysEvent>().Publish(UseHotkeys);
             //背景图像
             ChangeBackground(UserImageBackground,false);
-        }
-
-        //切换深色模式
-        private void ToggleDarkMode(bool isDarkTheme)
-        {
-            var paletteHelper = new PaletteHelper();
-            var theme = paletteHelper.GetTheme();
-
-            theme.SetBaseTheme(isDarkTheme ? Theme.Dark : Theme.Light);
-            paletteHelper.SetTheme(theme);
         }
 
         //切换背景图像
@@ -348,11 +280,6 @@ namespace SkyPC_AutoMusic.ViewModel
                     }
                     //切换背景图像
                     EA.EventAggregator.GetEvent<AddBackgroundEvent>().Publish(bitmap);
-                    //切换深色模式
-                    if (ShouldUseDarkMode(bitmap) != DarkTheme)
-                    {
-                        DarkTheme = !DarkTheme;
-                    }
                 }
                 else//图片不存在
                 {
@@ -360,62 +287,11 @@ namespace SkyPC_AutoMusic.ViewModel
                     {
                         SendDialog.MessageTips(Properties.Resources.Options_Tips_MissBackgroundFile);
                     }
-                    else
-                    {
-                        //EA.EventAggregator.GetEvent<SendMessageSnackbar>().Publish(Properties.Resources.Options_Tips_MissBackgroundFile);
-                    }
                 }
             }
             else//删除背景图片
             {
                 EA.EventAggregator.GetEvent<DeleteBackgroundEvent>().Publish();
-            }
-            
-        }
-
-        //根据背景决定深色模式
-        public bool ShouldUseDarkMode(BitmapImage bitmap)
-        {
-            {
-                try
-                {
-                    // 定义一个变量，存储图片的总亮度
-                    double brightness = 0;
-
-                    // 获取图片的像素宽度和高度
-                    int width = bitmap.PixelWidth;
-                    int height = bitmap.PixelHeight;
-
-                    // 获取图片的像素数据
-                    byte[] pixels = new byte[width * height * 4];
-                    bitmap.CopyPixels(pixels, width * 4, 0);
-
-                    // 遍历每个像素
-                    for (int i = 0; i < pixels.Length; i += 4)
-                    {
-                        // 获取像素的蓝色、绿色和红色分量
-                        byte blue = pixels[i];
-                        byte green = pixels[i + 1];
-                        byte red = pixels[i + 2];
-
-                        // 计算像素的亮度，使用公式：Y = 0.299 * R + 0.587 * G + 0.114 * B
-                        double y = 0.299 * red + 0.587 * green + 0.114 * blue;
-
-                        // 累加像素的亮度
-                        brightness += y;
-                    }
-
-                    // 计算图片的平均亮度
-                    brightness /= (width * height);
-
-                    // 如果平均亮度小于128，则返回true，表示文本前景色应为白色
-                    // 否则，返回false，表示文本前景色应为黑色
-                    return brightness < 128;
-                }
-                catch
-                {
-                    return true;
-                }
             }
         }
 

@@ -5,22 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SkyPC_AutoMusic.View"
              mc:Ignorable="d" 
-             d:DesignHeight="120" d:DesignWidth="180" d:Background="{StaticResource MaterialDesignPaper}">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-
+             d:DesignHeight="140" d:DesignWidth="200" Background="Transparent">
+    <Border Style="{StaticResource GlassCard}" Padding="14">
         <StackPanel>
-            <ProgressBar Width="24" Height="24" Margin="16" Style="{StaticResource MaterialDesignCircularProgressBar}" IsIndeterminate="True"/>
-            <Label x:Name="Message" HorizontalAlignment="Center" Margin="8"/>
+            <ProgressBar Width="26" Height="26" Margin="10" HorizontalAlignment="Center" Style="{StaticResource MaterialDesignCircularProgressBar}" IsIndeterminate="True"/>
+            <Label x:Name="Message" HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="8,4,0,0">
+                <Label Content="{Binding Progress}" Foreground="{DynamicResource TextMutedBrush}"/>
+                <Label Content="/" Foreground="{DynamicResource TextMutedBrush}"/>
+                <Label x:Name="Total" Foreground="{DynamicResource TextMutedBrush}"/>
+            </StackPanel>
         </StackPanel>
-
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="8">
-            <Label Content="{Binding Progress}"/>
-            <Label Content="/"/>
-            <Label x:Name="Total"/>
-        </StackPanel>
-    </Grid>
+    </Border>
 </UserControl>

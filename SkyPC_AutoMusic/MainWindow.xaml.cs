@@ -98,7 +98,7 @@ namespace SkyPC_AutoMusic
         //删除背景图像
         private void DeleteBackground()
         {
-            Body.SetResourceReference(Control.BackgroundProperty, "MaterialDesignPaper");
+            Body.Background = Brushes.Transparent;
             BgImage.Source = null;
         }
 
@@ -111,20 +111,13 @@ namespace SkyPC_AutoMusic
             }
         }
 
-        //窗口展开或收起
+        //窗口展开或收起（带高度动画）
         private void WindowExpand(bool isExpand)
         {
+            double target;
             if(isExpand)
             {
-                Height = originalHeight;
-
-                //DoubleAnimation animation = new DoubleAnimation();
-                //animation.From = Height;
-                //animation.To = originalHeight;
-                //animation.Duration = new Duration(TimeSpan.FromMilliseconds(300));
-
-                //BeginAnimation(Window.HeightProperty, animation);
-
+                target = originalHeight;
                 TitleBar.Children.Clear();
                 TitleBar.Children.Add(new UserControlTitleBarNormal());
             }
@@ -132,18 +125,37 @@ namespace SkyPC_AutoMusic
             {
                 //收起前记住当前高度，展开时好还原（含用户手动缩放后的高度）
                 originalHeight = Height;
-                Height = TitleBar.ActualHeight;
-
-                //DoubleAnimation animation = new DoubleAnimation();
-                //animation.From = Height;
-                //animation.To = TitleBar.ActualHeight;
-                //animation.Duration = new Duration(TimeSpan.FromMilliseconds(300));
-
-                //BeginAnimation(Window.HeightProperty, animation);
-
+                target = TitleBar.ActualHeight;
                 TitleBar.Children.Clear();
                 TitleBar.Children.Add(new UserControlTitleBarDetail());
             }
+
+            QuadraticEase ease = new QuadraticEase { EasingMode = EasingMode.EaseInOut };
+            BeginAnimation(HeightProperty, new DoubleAnimation(target, TimeSpan.FromMilliseconds(240)) { EasingFunction = ease });
+        }
+
+        //页面切换动效：内容淡入 + 轻微上移
+        private void Body_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            TabItem item = Body.SelectedItem as TabItem;
+            if (item == null)
+                return;
+            UIElement content = item.Content as UIElement;
+            if (content == null)
+                return;
+
+            TranslateTransform translate = content.RenderTransform as TranslateTransform;
+            if (translate == null)
+            {
+                translate = new TranslateTransform();
+                content.RenderTransform = translate;
+            }
+
+            QuadraticEase ease = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+            content.Opacity = 0;
+            translate.Y = 12;
+            content.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1, TimeSpan.FromMilliseconds(200)) { EasingFunction = ease });
+            translate.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(0, TimeSpan.FromMilliseconds(220)) { EasingFunction = ease });
         }
 
         //消息框

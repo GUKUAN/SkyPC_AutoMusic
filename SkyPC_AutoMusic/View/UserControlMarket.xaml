@@ -6,14 +6,15 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:SkyPC_AutoMusic.View"
              xmlns:loc="clr-namespace:SkyPC_AutoMusic.Properties"
+             xmlns:theme="clr-namespace:SkyPC_AutoMusic.Theme"
              xmlns:viewmodel="clr-namespace:SkyPC_AutoMusic.ViewModel"
              d:DataContext="{d:DesignInstance Type=viewmodel:MarketViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="600" d:Background="#FFE5E5E5">
+             d:DesignHeight="400" d:DesignWidth="600" d:Background="Transparent">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </UserControl.Resources>
-    <Grid Margin="10">
+    <Grid Margin="18">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -21,18 +22,17 @@
         </Grid.RowDefinitions>
 
         <!--标题与状态-->
-        <Grid>
+        <Grid Margin="0,0,0,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Margin="10" Foreground="{DynamicResource PrimaryHueMidBrush}" FontSize="20" Text="{x:Static loc:Resources.Market_Header}"/>
-            <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0" Opacity="0.7" TextTrimming="CharacterEllipsis" Text="{Binding StatusText}"/>
+            <TextBlock Style="{StaticResource PageTitle}" Text="{x:Static loc:Resources.Market_Header}"/>
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0" Style="{StaticResource MutedText}" TextTrimming="CharacterEllipsis" Text="{Binding StatusText}"/>
         </Grid>
 
         <!--工具栏-->
-        <StackPanel Grid.Row="1" Margin="0,0,0,8">
-            <!--第一行：筛选 + 图标按钮-->
+        <StackPanel Grid.Row="1" Margin="0,0,0,12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -41,59 +41,62 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <!--分类-->
                 <ComboBox Grid.Column="0" Width="110" VerticalAlignment="Center" Margin="0,0,6,0" ItemsSource="{Binding Groups}" SelectedItem="{Binding SelectedGroup, Mode=TwoWay}" materialDesign:HintAssist.Hint="{x:Static loc:Resources.Market_Category}"/>
-                <!--子类-->
                 <ComboBox Grid.Column="1" Width="110" VerticalAlignment="Center" Margin="0,0,6,0" ItemsSource="{Binding Subs}" SelectedItem="{Binding SelectedSub, Mode=TwoWay}" materialDesign:HintAssist.Hint="{x:Static loc:Resources.Market_SubCategory}"/>
-                <!--搜索-->
                 <TextBox Grid.Column="2" MinWidth="100" VerticalAlignment="Center" Margin="0,0,6,0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="{x:Static loc:Resources.Market_SearchHint}" materialDesign:TextFieldAssist.HasClearButton="True" Style="{StaticResource MaterialDesignFilledTextBox}"/>
-                <Button Grid.Column="3" Style="{StaticResource MaterialDesignIconButton}" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}" Margin="4,0" Command="{Binding OpenRepoCommand}" ToolTip="{x:Static loc:Resources.Market_Repo}" Cursor="Hand">
+                <Button Grid.Column="3" Style="{StaticResource GlassIconSurface}" theme:UiMotion.PressScale="True" Margin="4,0" Foreground="{DynamicResource TextPrimaryBrush}" Command="{Binding OpenRepoCommand}" ToolTip="{x:Static loc:Resources.Market_Repo}" Cursor="Hand">
                     <materialDesign:PackIcon Kind="Github"/>
                 </Button>
-                <Button Grid.Column="4" Style="{StaticResource MaterialDesignIconButton}" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}" Margin="4,0" Command="{Binding RefreshCommand}" ToolTip="{x:Static loc:Resources.Market_Refresh}" Cursor="Hand">
+                <Button Grid.Column="4" Style="{StaticResource GlassIconSurface}" theme:UiMotion.PressScale="True" Margin="4,0" Foreground="{DynamicResource AccentBrush}" Command="{Binding RefreshCommand}" ToolTip="{x:Static loc:Resources.Market_Refresh}" Cursor="Hand">
                     <materialDesign:PackIcon Kind="Refresh"/>
                 </Button>
             </Grid>
-            <!--第二行：批量-->
-            <Button HorizontalAlignment="Right" Margin="0,6,0,0" Style="{StaticResource MaterialDesignFlatButton}" Command="{Binding DownloadAllCommand}" Content="{x:Static loc:Resources.Market_DownloadAll}" Cursor="Hand"/>
+            <Button HorizontalAlignment="Right" Margin="0,10,0,0" Style="{StaticResource MaterialDesignFlatButton}" theme:UiMotion.PressScale="True" Foreground="{DynamicResource AccentBrush}" Command="{Binding DownloadAllCommand}" Content="{x:Static loc:Resources.Market_DownloadAll}" Cursor="Hand"/>
         </StackPanel>
 
         <!--列表-->
-        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="2" CornerRadius="5" Opacity="0.95">
+        <Border Grid.Row="2" Style="{StaticResource GlassCard}" Padding="6">
             <Grid>
                 <ListView x:Name="ItemsList" ItemsSource="{Binding View}" SelectedItem="{Binding SelectedItem}"
-                          Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
+                          Background="Transparent" BorderThickness="0"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Margin" Value="2,2"/>
+                            <Setter Property="Padding" Value="10,8"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource GlassSurfaceHoverBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource GlassCardBrush}"/>
+                                </Trigger>
+                            </Style.Triggers>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="4,3">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <!--曲名 + 分类-->
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                                     <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock FontSize="11" Opacity="0.6" TextTrimming="CharacterEllipsis" Text="{Binding Group}"/>
+                                    <TextBlock Style="{StaticResource MutedText}" TextTrimming="CharacterEllipsis" Text="{Binding Group}"/>
                                 </StackPanel>
-                                <!--大小-->
-                                <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="8,0" Opacity="0.7" Text="{Binding SizeText}"/>
-                                <!--已下载-->
-                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="8,0" Foreground="{DynamicResource PrimaryHueMidBrush}" Text="{Binding DownloadMark}"/>
-                                <!--下载-->
-                                <Button Grid.Column="3" Style="{StaticResource MaterialDesignFlatButton}" VerticalAlignment="Center" Content="{x:Static loc:Resources.Market_Download}" Click="Download_Click" Cursor="Hand"/>
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="8,0" Style="{StaticResource MutedText}" Text="{Binding SizeText}"/>
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="8,0" Foreground="{DynamicResource AccentBrush}" Text="{Binding DownloadMark}"/>
+                                <Button Grid.Column="3" Style="{StaticResource MaterialDesignFlatButton}" theme:UiMotion.PressScale="True" VerticalAlignment="Center" Foreground="{DynamicResource AccentBrush}" Content="{x:Static loc:Resources.Market_Download}" Click="Download_Click" Cursor="Hand"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.6" Text="{x:Static loc:Resources.Market_Empty}"
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource MutedText}" Text="{x:Static loc:Resources.Market_Empty}"
                            Visibility="{Binding EmptyVisible, Converter={StaticResource BoolToVis}}"/>
             </Grid>
         </Border>

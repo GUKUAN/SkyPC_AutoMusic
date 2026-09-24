@@ -10,79 +10,92 @@
         mc:Ignorable="d"
         Topmost="True"
         ResizeMode="CanResize"
-        MinHeight="200" MinWidth="440"
-        Background="{x:Null}"
-        Title="{x:Static loc:Resources.Main_WindowTitle}" Height="440" Width="560">
+        MinHeight="240" MinWidth="460"
+        Background="{DynamicResource GlassWindowBrush}"
+        Title="{x:Static loc:Resources.Main_WindowTitle}" Height="480" Width="580">
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="-1" CaptionHeight="0" UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
-    <materialDesign:DialogHost Identifier="RootDialog" DialogContentUniformCornerRadius="5">
+    <materialDesign:DialogHost Identifier="RootDialog" DialogContentUniformCornerRadius="16">
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <!--弹出消息-->
-            <materialDesign:Snackbar ActionButtonStyle="{StaticResource MaterialDesignSnackbarActionMidButton}" Grid.Row="1" Panel.ZIndex="1" x:Name="Snackbar" MessageQueue="{materialDesign:MessageQueue}"/>
-            <!--非客户区-->
-            <DockPanel x:Name="TitleBar" MouseMove="title_MouseMove">
-                <!--标题栏-->
-                <views:UserControlTitleBarNormal/>
-            </DockPanel>
-            <!--客户区-->
-            <Grid Grid.Row="1">
-                <!--背景-->
-                <Image x:Name="BgImage" Stretch="Fill"/>
-                <TabControl x:Name="Body" TabStripPlacement="Left" Style="{StaticResource MaterialDesignNavigationRailTabControl}">
-                    <!-- 第一个标签 -->
-                    <TabItem>
-                        <TabItem.Header>
-                            <StackPanel Width="auto" Height="auto">
-                                <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Piano" />
-                                <TextBlock HorizontalAlignment="Center" Text="{x:Static loc:Resources.Main_Play}" />
-                            </StackPanel>
-                        </TabItem.Header>
-                        <Grid>
-                            <views:UserControlPlay/>
-                        </Grid>
-                    </TabItem>
-                    <!-- 第二个标签 -->
-                    <TabItem>
-                        <TabItem.Header>
-                            <StackPanel Width="auto" Height="auto">
-                                <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="DocumentSign" />
-                                <TextBlock HorizontalAlignment="Center" Text="{x:Static loc:Resources.Main_Sheets}" />
-                            </StackPanel>
-                        </TabItem.Header>
-                        <Grid>
-                            <views:UserControlList/>
-                        </Grid>
-                    </TabItem>
-                    <!-- 市场标签 -->
-                    <TabItem>
-                        <TabItem.Header>
-                            <StackPanel Width="auto" Height="auto">
-                                <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Storefront" />
-                                <TextBlock HorizontalAlignment="Center" Text="{x:Static loc:Resources.Main_Market}" />
-                            </StackPanel>
-                        </TabItem.Header>
-                        <Grid>
-                            <views:UserControlMarket/>
-                        </Grid>
-                    </TabItem>
-                    <!-- 第三个标签 -->
-                    <TabItem>
-                        <TabItem.Header>
-                            <StackPanel Width="auto" Height="auto">
-                                <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Gear" />
-                                <TextBlock HorizontalAlignment="Center" Text="{x:Static loc:Resources.Main_Settings}" />
-                            </StackPanel>
-                        </TabItem.Header>
-                        <Grid>
-                            <views:UserControlOptions/>
-                        </Grid>
-                    </TabItem>
-                </TabControl>
+            <!--背景图层（壁纸做虚化，营造玻璃底）-->
+            <Image x:Name="BgImage" Stretch="Fill" Opacity="0.55">
+                <Image.Effect>
+                    <BlurEffect Radius="26"/>
+                </Image.Effect>
+            </Image>
+            <!--主题底色遮罩，保证文字可读-->
+            <Border Background="{DynamicResource GlassWindowBrush}" Opacity="0.7"/>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <!--弹出消息-->
+                <materialDesign:Snackbar ActionButtonStyle="{StaticResource MaterialDesignSnackbarActionMidButton}" Grid.Row="1" Panel.ZIndex="8" x:Name="Snackbar" MessageQueue="{materialDesign:MessageQueue}"/>
+
+                <!--非客户区（玻璃标题栏）-->
+                <DockPanel x:Name="TitleBar" Background="Transparent" MouseMove="title_MouseMove">
+                    <views:UserControlTitleBarNormal/>
+                </DockPanel>
+
+                <!--客户区-->
+                <Grid Grid.Row="1">
+                    <TabControl x:Name="Body" Background="Transparent" TabStripPlacement="Left"
+                                SelectionChanged="Body_SelectionChanged"
+                                Style="{StaticResource MaterialDesignNavigationRailTabControl}">
+                        <!-- 第一个标签 -->
+                        <TabItem>
+                            <TabItem.Header>
+                                <StackPanel Width="auto" Height="auto">
+                                    <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Piano" />
+                                    <TextBlock HorizontalAlignment="Center" Text="{x:Static loc:Resources.Main_Play}" />
+                                </StackPanel>
+                            </TabItem.Header>
+                            <Grid>
+                                <views:UserControlPlay/>
+                            </Grid>
+                        </TabItem>
+                        <!-- 第二个标签 -->
+                        <TabItem>
+                            <TabItem.Header>
+                                <StackPanel Width="auto" Height="auto">
+                                    <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="DocumentSign" />
+                                    <TextBlock HorizontalAlignment="Center" Text="{x:Static loc:Resources.Main_Sheets}" />
+                                </StackPanel>
+                            </TabItem.Header>
+                            <Grid>
+                                <views:UserControlList/>
+                            </Grid>
+                        </TabItem>
+                        <!-- 市场标签 -->
+                        <TabItem>
+                            <TabItem.Header>
+                                <StackPanel Width="auto" Height="auto">
+                                    <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Storefront" />
+                                    <TextBlock HorizontalAlignment="Center" Text="{x:Static loc:Resources.Main_Market}" />
+                                </StackPanel>
+                            </TabItem.Header>
+                            <Grid>
+                                <views:UserControlMarket/>
+                            </Grid>
+                        </TabItem>
+                        <!-- 第三个标签 -->
+                        <TabItem>
+                            <TabItem.Header>
+                                <StackPanel Width="auto" Height="auto">
+                                    <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" Kind="Gear" />
+                                    <TextBlock HorizontalAlignment="Center" Text="{x:Static loc:Resources.Main_Settings}" />
+                                </StackPanel>
+                            </TabItem.Header>
+                            <Grid>
+                                <views:UserControlOptions/>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
             </Grid>
         </Grid>
     </materialDesign:DialogHost>

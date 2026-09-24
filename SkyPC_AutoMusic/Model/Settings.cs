@@ -41,6 +41,7 @@ namespace SkyPC_AutoMusic.Model
         private bool playlistInitialized;
         private string gitHubToken;
         private HumanizeSettings humanize;
+        private string themeId;
 
         //文件夹路径
         public string FolderPath
@@ -157,6 +158,13 @@ namespace SkyPC_AutoMusic.Model
             set { gitHubToken = value; }
         }
 
+        //当前主题（预设 id）
+        public string ThemeId
+        {
+            get { return String.IsNullOrEmpty(themeId) ? Theme.Themes.DefaultId : themeId; }
+            set { themeId = value; }
+        }
+
         //拟人化设置（保持同一实例，界面绑定不失效）
         public HumanizeSettings Humanize
         {
@@ -209,6 +217,7 @@ namespace SkyPC_AutoMusic.Model
             UseHotkeys = source.UseHotkeys;
             PlaylistInitialized = source.PlaylistInitialized;
             GitHubToken = source.GitHubToken;
+            ThemeId = source.ThemeId;
             Humanize.CopyFrom(source.Humanize);
         }
 

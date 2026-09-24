@@ -6,51 +6,54 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:SkyPC_AutoMusic.View"
              xmlns:loc="clr-namespace:SkyPC_AutoMusic.Properties"
+             xmlns:theme="clr-namespace:SkyPC_AutoMusic.Theme"
              xmlns:viewmodel="clr-namespace:SkyPC_AutoMusic.ViewModel"
              d:DataContext="{d:DesignInstance Type=viewmodel:KeybindDialogViewModel}"
              mc:Ignorable="d" 
              MinWidth="440"
-             d:DesignHeight="360" d:DesignWidth="440" d:Background="{DynamicResource MaterialDesignPaper}">
-    <Grid Margin="12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+             d:DesignHeight="380" d:DesignWidth="440" Background="Transparent">
+    <Border Style="{StaticResource GlassCard}" Padding="12">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <!--Header-->
-        <StackPanel Orientation="Horizontal">
-            <materialDesign:PackIcon Width="25" Height="25" Margin="10" Kind="KeyboardOutline"/>
-            <TextBlock VerticalAlignment="Center" FontSize="16" Text="{x:Static loc:Resources.Keybind_Title}"/>
-        </StackPanel>
+            <!--Header-->
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Width="22" Height="22" Margin="6" Kind="KeyboardOutline" Foreground="{DynamicResource AccentBrush}"/>
+                <TextBlock VerticalAlignment="Center" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}" Text="{x:Static loc:Resources.Keybind_Title}"/>
+            </StackPanel>
 
-        <!--Tips-->
-        <TextBlock Grid.Row="1" Margin="10,4,10,10" Opacity="0.7" TextWrapping="Wrap" Text="{x:Static loc:Resources.Keybind_Tips}"/>
+            <!--Tips-->
+            <TextBlock Grid.Row="1" Margin="6,4,6,10" Style="{StaticResource MutedText}" TextWrapping="Wrap" Text="{x:Static loc:Resources.Keybind_Tips}"/>
 
-        <!--键位格子-->
-        <ItemsControl Grid.Row="2" ItemsSource="{Binding Slots}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="5"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Width="72" Height="62" Margin="4" Click="Slot_Click">
-                        <StackPanel>
-                            <TextBlock HorizontalAlignment="Center" FontSize="10" Opacity="0.6" Text="{Binding NoteLabel}"/>
-                            <TextBlock HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" Text="{Binding KeyName}"/>
-                        </StackPanel>
-                    </Button>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            <!--键位格子-->
+            <ItemsControl Grid.Row="2" ItemsSource="{Binding Slots}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="5"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}" theme:UiMotion.PressScale="True" Foreground="{DynamicResource TextPrimaryBrush}" Width="72" Height="60" Margin="4" Click="Slot_Click">
+                            <StackPanel>
+                                <TextBlock HorizontalAlignment="Center" FontSize="10" Opacity="0.6" Text="{Binding NoteLabel}"/>
+                                <TextBlock HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" Text="{Binding KeyName}"/>
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
-        <!--按钮-->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Style="{DynamicResource MaterialDesignFlatButton}" Margin="6" Content="{x:Static loc:Resources.Keybind_Reset}" Command="{Binding ResetCommand}"/>
-            <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}" Margin="6" Content="{x:Static loc:Resources.Options_Confirm}" Command="{Binding ConfirmCommand}"/>
-        </StackPanel>
-    </Grid>
+            <!--按钮-->
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Style="{DynamicResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="6" Content="{x:Static loc:Resources.Keybind_Reset}" Command="{Binding ResetCommand}"/>
+                <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="{DynamicResource AccentBrush}" Margin="6" Content="{x:Static loc:Resources.Options_Confirm}" Command="{Binding ConfirmCommand}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
 </UserControl>

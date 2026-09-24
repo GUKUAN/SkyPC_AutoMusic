@@ -513,4 +513,7 @@
   <data name="Play_Humanize_Toggle" xml:space="preserve">
     <value>拟人化</value>
   </data>
+  <data name="Options_Theme" xml:space="preserve">
+    <value>主题</value>
+  </data>
 </root>

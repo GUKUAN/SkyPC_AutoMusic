@@ -8,23 +8,25 @@
              xmlns:loc="clr-namespace:SkyPC_AutoMusic.Properties"
              mc:Ignorable="d" 
              MinWidth="400"
-             d:DesignHeight="200" d:DesignWidth="400" d:Background="{DynamicResource MaterialDesignPaper}">
-    <Grid Margin="8">
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+             d:DesignHeight="200" d:DesignWidth="400" Background="Transparent">
+    <Border Style="{StaticResource GlassCard}" Padding="12">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel>
-            <!--Header-->
-            <StackPanel Orientation="Horizontal">
-                <materialDesign:PackIcon Width="25" Height="25" Margin="10" Kind="Search"/>
-                <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.List_Btn_Search}"/>
+            <StackPanel>
+                <!--Header-->
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Width="22" Height="22" Margin="6" Kind="Search" Foreground="{DynamicResource AccentBrush}"/>
+                    <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" Text="{x:Static loc:Resources.List_Btn_Search}"/>
+                </StackPanel>
+                <!--Content-->
+                <TextBox x:Name="TextBox" materialDesign:HintAssist.Hint="{x:Static loc:Resources.List_FilterTips}" materialDesign:TextFieldAssist.HasClearButton="True" Margin="6,10" Style="{StaticResource MaterialDesignFilledTextBox}"/>
             </StackPanel>
-            <!--Content-->
-            <TextBox  x:Name="TextBox" materialDesign:HintAssist.Hint="{x:Static loc:Resources.List_FilterTips}"  materialDesign:TextFieldAssist.HasClearButton="True" Margin="10" Style="{StaticResource MaterialDesignFilledTextBox}"/>
-        </StackPanel>
 
-        <Button Grid.Row="1" IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Right" Margin="10" Content="{x:Static loc:Resources.Options_Confirm}" Command="{Binding SetFilterCommand}"/>
-    </Grid>
+            <Button Grid.Row="1" IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Right" Margin="8" Content="{x:Static loc:Resources.Options_Confirm}" Command="{Binding SetFilterCommand}"/>
+        </Grid>
+    </Border>
 </UserControl>

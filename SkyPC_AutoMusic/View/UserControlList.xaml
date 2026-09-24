@@ -5,62 +5,76 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SkyPC_AutoMusic.View" 
              xmlns:loc="clr-namespace:SkyPC_AutoMusic.Properties"
+             xmlns:theme="clr-namespace:SkyPC_AutoMusic.Theme"
              xmlns:viewmodel="clr-namespace:SkyPC_AutoMusic.ViewModel" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DataContext="{d:DesignInstance Type=viewmodel:ListViewModel}"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="550" d:Background="#FFE5E5E5">
-    <Grid Cursor="" Margin="10,0">
+             d:DesignHeight="360" d:DesignWidth="560" d:Background="Transparent">
+    <Grid Margin="18">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <DockPanel>
-            <!--浏览按钮-->
-            <Button DockPanel.Dock="Right" Style="{StaticResource MaterialDesignIconButton}" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}" Margin="0,10,10,10" Command="{Binding SelectFolderCommand}" ToolTip="{x:Static loc:Resources.List_Btn_ImportFolder}" Cursor="Hand">
-                <materialDesign:PackIcon Kind="Folder" />
-            </Button>
-            <!--删除按钮-->
-            <Button DockPanel.Dock="Right" Style="{StaticResource MaterialDesignIconButton}" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}" Margin="0,10,10,10" Command="{Binding DeleteSelectionCommand}" ToolTip="{x:Static loc:Resources.List_Btn_Delete}" Cursor="Hand">
-                <materialDesign:PackIcon Kind="Delete" />
-            </Button>
-            <!--添加按钮-->
-            <Button DockPanel.Dock="Right" Style="{StaticResource MaterialDesignIconButton}" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}" Margin="0,10,10,10" Command="{Binding AddSongCommand}" ToolTip="{x:Static loc:Resources.List_Btn_Add}" Cursor="Hand">
-                <materialDesign:PackIcon Kind="Add" />
-            </Button>
-            <!--搜索按钮-->
-            <Button DockPanel.Dock="Right" Style="{StaticResource MaterialDesignIconButton}" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}" Margin="0,10,10,10" Command="{Binding FilterDialogCommand}" ToolTip="{x:Static loc:Resources.List_Btn_Search}" Cursor="Hand">
-                <materialDesign:PackIcon Kind="Search" />
-            </Button>
-            <!--标签-->
-            <TextBlock VerticalAlignment="Center" Margin="10" Foreground="{DynamicResource PrimaryHueMidBrush}" FontSize="20" Text="{Binding HeaderText}"/>
+        <!--标题与按钮-->
+        <DockPanel Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <Button Style="{StaticResource GlassIconSurface}" theme:UiMotion.PressScale="True" Margin="4,0" Foreground="{DynamicResource TextPrimaryBrush}" Command="{Binding FilterDialogCommand}" ToolTip="{x:Static loc:Resources.List_Btn_Search}" Cursor="Hand">
+                    <materialDesign:PackIcon Kind="Search" />
+                </Button>
+                <Button Style="{StaticResource GlassIconSurface}" theme:UiMotion.PressScale="True" Margin="4,0" Foreground="{DynamicResource TextPrimaryBrush}" Command="{Binding AddSongCommand}" ToolTip="{x:Static loc:Resources.List_Btn_Add}" Cursor="Hand">
+                    <materialDesign:PackIcon Kind="Add" />
+                </Button>
+                <Button Style="{StaticResource GlassIconSurface}" theme:UiMotion.PressScale="True" Margin="4,0" Foreground="{DynamicResource TextPrimaryBrush}" Command="{Binding DeleteSelectionCommand}" ToolTip="{x:Static loc:Resources.List_Btn_Delete}" Cursor="Hand">
+                    <materialDesign:PackIcon Kind="Delete" />
+                </Button>
+                <Button Style="{StaticResource GlassIconSurface}" theme:UiMotion.PressScale="True" Margin="4,0" Foreground="{DynamicResource AccentBrush}" Command="{Binding SelectFolderCommand}" ToolTip="{x:Static loc:Resources.List_Btn_ImportFolder}" Cursor="Hand">
+                    <materialDesign:PackIcon Kind="Folder" />
+                </Button>
+            </StackPanel>
+            <TextBlock Style="{StaticResource PageTitle}" VerticalAlignment="Center" Text="{Binding HeaderText}"/>
         </DockPanel>
 
-        <Border Grid.Row="1" Margin="10,0,10,10" BorderBrush="Gray" BorderThickness="5" CornerRadius="5" Opacity="0.7" Cursor="" ToolTip="{x:Static loc:Resources.List_DropTips}">
-            <ListView x:Name="SheetsListView" SelectionMode="Single" SelectedItem="{Binding SelectedItem}" ItemsSource="{Binding SheetList}" DisplayMemberPath="name" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}">
+        <!--列表-->
+        <Border Grid.Row="1" Style="{StaticResource GlassCard}" Padding="6" ToolTip="{x:Static loc:Resources.List_DropTips}">
+            <ListView x:Name="SheetsListView" SelectionMode="Single" SelectedItem="{Binding SelectedItem}" ItemsSource="{Binding SheetList}"
+                      Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction Command="{Binding SelectionChangeCommand}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <!--<ListView.ItemContainerStyle>
+                <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
-                        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Margin" Value="2,2"/>
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource GlassSurfaceHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource GlassCardBrush}"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
-                </ListView.ItemContainerStyle>-->
-                <!--<ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="曲目" DisplayMemberBinding="{Binding name}"/>
-                        <GridViewColumn Header="作者" DisplayMemberBinding="{Binding author}"/>
-                        <GridViewColumn Header="改编者" DisplayMemberBinding="{Binding transcribedBy}"/>
-                        <GridViewColumn Header="调性" DisplayMemberBinding="{Binding pitchLevel}"/>
-                    </GridView>
-                </ListView.View>-->
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Style="{StaticResource MutedText}" TextTrimming="CharacterEllipsis">
+                                <Run Text="{Binding author}"/>
+                                <Run Text="  "/>
+                                <Run Text="{Binding transcribedBy}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
             </ListView>
         </Border>
-
     </Grid>
 </UserControl>

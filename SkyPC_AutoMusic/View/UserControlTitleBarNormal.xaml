@@ -6,30 +6,31 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:SkyPC_AutoMusic.View" 
              xmlns:loc="clr-namespace:SkyPC_AutoMusic.Properties"
+             xmlns:theme="clr-namespace:SkyPC_AutoMusic.Theme"
              xmlns:viewmodel="clr-namespace:SkyPC_AutoMusic.ViewModel" 
              d:DataContext="{d:DesignInstance Type=viewmodel:TitleBarNormalViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="48" d:DesignWidth="600" Background="{StaticResource PrimaryHueMidBrush}">
-    <materialDesign:ColorZone materialDesign:ElevationAssist.Elevation="Dp4" DockPanel.Dock="Top" Mode="PrimaryMid">
+             d:DesignHeight="44" d:DesignWidth="600" Background="Transparent">
+    <Border Background="{DynamicResource GlassHeaderBrush}" BorderBrush="{DynamicResource GlassStrokeSoftBrush}" BorderThickness="0,0,0,1">
         <DockPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Cursor="">
                 <!--收起按钮-->
-                <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding WindowShrinkCommand}" WindowChrome.IsHitTestVisibleInChrome="True">
+                <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="{DynamicResource TextPrimaryBrush}" theme:UiMotion.PressScale="True" Command="{Binding WindowShrinkCommand}" WindowChrome.IsHitTestVisibleInChrome="True">
                     <materialDesign:PackIcon Kind="ChevronDoubleUp"/>
                 </Button>
                 <!--缩小按钮-->
-                <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding WindowMinimizeCommand}" WindowChrome.IsHitTestVisibleInChrome="True">
+                <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="{DynamicResource TextPrimaryBrush}" theme:UiMotion.PressScale="True" Command="{Binding WindowMinimizeCommand}" WindowChrome.IsHitTestVisibleInChrome="True">
                     <materialDesign:PackIcon Kind="Minimize" />
                 </Button>
                 <!--关闭按钮-->
-                <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Command="{Binding WindowCloseCommand}" WindowChrome.IsHitTestVisibleInChrome="True">
+                <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="{DynamicResource TextPrimaryBrush}" theme:UiMotion.PressScale="True" Command="{Binding WindowCloseCommand}" WindowChrome.IsHitTestVisibleInChrome="True">
                     <materialDesign:PackIcon Kind="Close" />
                 </Button>
             </StackPanel>
             <!--图标-->
-            <Image Source="/Logo/app-icon.png" Height="28" Width="28" Margin="10" DockPanel.Dock="Left"/>
+            <Image Source="/Logo/app-icon.png" Height="24" Width="24" Margin="12,0,6,0" DockPanel.Dock="Left"/>
             <!--标签-->
-            <TextBlock Style="{DynamicResource TextBlockStyle1}" Padding="8" FontSize="16" Text="{x:Static loc:Resources.Main_WindowTitle}" VerticalAlignment="Center"/>
+            <TextBlock Padding="6,0" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Text="{x:Static loc:Resources.Main_WindowTitle}" VerticalAlignment="Center"/>
         </DockPanel>
-    </materialDesign:ColorZone>
+    </Border>
 </UserControl>

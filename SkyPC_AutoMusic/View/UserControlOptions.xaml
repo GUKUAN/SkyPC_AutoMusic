@@ -6,59 +6,49 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:SkyPC_AutoMusic.View"
              xmlns:loc="clr-namespace:SkyPC_AutoMusic.Properties"
-             xmlns:viewmodel="clr-namespace:SkyPC_AutoMusic.ViewModel"
-             xmlns:sys="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:theme="clr-namespace:SkyPC_AutoMusic.Theme"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:viewmodel="clr-namespace:SkyPC_AutoMusic.ViewModel"
              d:DataContext="{d:DesignInstance Type=viewmodel:OptionsViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="550" d:Background="#FFE5E5E5">
-    <Control.Resources>
-        <ResourceDictionary>
-            <Style x:Key="MaterialDesignOutlinedCard" TargetType="{x:Type materialDesign:Card}">
-                <Setter Property="Background" Value="{DynamicResource MaterialDesignCardBackground}" />
-                <Setter Property="Focusable" Value="False" />
-                <Setter Property="Margin" Value="10"/>
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type materialDesign:Card}">
-                            <Grid Background="Transparent">
-                                <Border x:Name="PART_ClipBorder"
-                    Padding="{TemplateBinding Padding}"
-                    Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
-                    Clip="{TemplateBinding ContentClip}">
-                                    <ContentPresenter x:Name="ContentPresenter"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Content="{TemplateBinding ContentControl.Content}"
-                                ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"
-                                ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
-                                ContentTemplateSelector="{TemplateBinding ContentControl.ContentTemplateSelector}" />
-                                </Border>
-                            </Grid>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="ClipContent" Value="True">
-                                    <Setter TargetName="ContentPresenter" Property="Clip" Value="{Binding ContentClip, RelativeSource={RelativeSource TemplatedParent}}" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="VerticalContentAlignment" Value="Stretch" />
-            </Style>
-        </ResourceDictionary>
-    </Control.Resources>
+             d:DesignHeight="600" d:DesignWidth="560" d:Background="Transparent">
+    <UserControl.Resources>
+        <Style x:Key="OptionCard" TargetType="Border" BasedOn="{StaticResource GlassCard}">
+            <Setter Property="Margin" Value="0,4"/>
+            <Setter Property="Padding" Value="0,2"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
-        <ScrollViewer  VerticalScrollBarVisibility="Auto" >
-            <StackPanel x:Name="Panel">
-                <TextBlock Margin="10" Foreground="{DynamicResource PrimaryHueMidBrush}" HorizontalAlignment="Center" FontSize="20" Text="{x:Static loc:Resources.Main_Settings}"/>
-                <!--标签-->
-                <Label Content="{x:Static loc:Resources.Options_Header_Appearance}" Margin="10,0" FontWeight="Bold"/>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="18,18,10,18">
+            <StackPanel x:Name="Panel" Margin="0,0,8,0">
+                <TextBlock Style="{StaticResource PageTitle}" HorizontalAlignment="Center" Margin="0,0,0,6" Text="{x:Static loc:Resources.Main_Settings}"/>
+
+                <!--外观-->
+                <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static loc:Resources.Options_Header_Appearance}"/>
+
+                <!--主题-->
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="PaletteOutline" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <ComboBox x:Name="ThemeComboBox" DockPanel.Dock="Right" Width="170" VerticalAlignment="Center" ItemsSource="{Binding ThemeList}" SelectedItem="{Binding SelectedTheme, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="16" Height="16" CornerRadius="5" Margin="0,0,8,0" Background="{Binding PreviewBrush}"/>
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Options_Theme}" TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
+                </Border>
+
                 <!--语言-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <ComboBox x:Name="LanguageComboBox" Width="100" DockPanel.Dock="Right" Margin="15,0" Focusable="False">
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Translate" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <ComboBox x:Name="LanguageComboBox" Width="170" DockPanel.Dock="Right" VerticalAlignment="Center" Focusable="False">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectionChanged">
                                     <i:InvokeCommandAction Command="{Binding LanguageChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}}" />
@@ -70,122 +60,107 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Translate" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_Language}" VerticalAlignment="Center" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Options_Language}"/>
                     </DockPanel>
-                </materialDesign:Card>
-                <!--深色模式-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <ToggleButton DockPanel.Dock="Right" Margin="15,0" IsChecked="{Binding DarkTheme}"/>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="CircleMultiple" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_DarkMode}" VerticalAlignment="Center" />
-                    </DockPanel>
-                </materialDesign:Card>
-                <!--主题色跟随系统-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <ToggleButton DockPanel.Dock="Right" Margin="15,0" IsChecked="{Binding ThemeColorFollowSystem}"/>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="PaletteOutline" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_ThemeColorFollowSystem}" VerticalAlignment="Center"/>
-                    </DockPanel>
-                </materialDesign:Card>
+                </Border>
+
                 <!--自定义背景-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <ToggleButton DockPanel.Dock="Right" Margin="15,0" IsChecked="{Binding UserImageBackground}"/>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="ImageOutline" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_CustomBackground}" VerticalAlignment="Center"/>
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <ToggleButton DockPanel.Dock="Right" VerticalAlignment="Center" IsChecked="{Binding UserImageBackground}"/>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="ImageOutline" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Options_CustomBackground}"/>
                     </DockPanel>
-                </materialDesign:Card>
-                <!--标签-->
-                <Label Content="{x:Static loc:Resources.Main_Play}" Margin="10,0" FontWeight="Bold"/>
-                <!--延音-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <ToggleButton DockPanel.Dock="Right" Margin="15,0" IsChecked="{Binding DelayToReleaseKey}"/>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="VectorCombine" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_CombineKeys}" VerticalAlignment="Center"/>
+                </Border>
+
+                <!--演奏-->
+                <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static loc:Resources.Main_Play}"/>
+
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <ToggleButton DockPanel.Dock="Right" VerticalAlignment="Center" IsChecked="{Binding DelayToReleaseKey}"/>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="VectorCombine" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Options_CombineKeys}"/>
                     </DockPanel>
-                </materialDesign:Card>
-                <!--后台演奏-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <ToggleButton DockPanel.Dock="Right" Margin="15,0" IsChecked="{Binding IsPlayInBackground}"/>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="ArrangeSendBackward" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_PlayBackground}" VerticalAlignment="Center" />
+                </Border>
+
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <ToggleButton DockPanel.Dock="Right" VerticalAlignment="Center" IsChecked="{Binding IsPlayInBackground}"/>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="ArrangeSendBackward" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Options_PlayBackground}"/>
                     </DockPanel>
-                </materialDesign:Card>
-                <!--键位映射-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <ToggleButton DockPanel.Dock="Right" Margin="15,0" IsChecked="{Binding IsUsingSkyStudioKeyMapper}"/>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="KeyboardOutline" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_KeyMapper}" VerticalAlignment="Center" />
+                </Border>
+
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <ToggleButton DockPanel.Dock="Right" VerticalAlignment="Center" IsChecked="{Binding IsUsingSkyStudioKeyMapper}"/>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="KeyboardOutline" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Options_KeyMapper}"/>
                     </DockPanel>
-                </materialDesign:Card>
-                <!--自定义键位-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
+                </Border>
+
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                            <ToggleButton Margin="15,0" IsChecked="{Binding UseCustomKeyMapper}"/>
-                            <Button Style="{StaticResource MaterialDesignIconButton}" Command="{Binding OpenKeybindCommand}" Cursor="Hand" ToolTip="{x:Static loc:Resources.Keybind_Title}">
-                                <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="Pencil"/>
+                            <ToggleButton VerticalAlignment="Center" IsChecked="{Binding UseCustomKeyMapper}"/>
+                            <Button Style="{StaticResource MaterialDesignIconButton}" theme:UiMotion.PressScale="True" Foreground="{DynamicResource TextPrimaryBrush}" Command="{Binding OpenKeybindCommand}" Cursor="Hand" ToolTip="{x:Static loc:Resources.Keybind_Title}">
+                                <materialDesign:PackIcon Kind="Pencil"/>
                             </Button>
                         </StackPanel>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Keyboard" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_CustomKeys}" VerticalAlignment="Center" />
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Keyboard" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Options_CustomKeys}"/>
                     </DockPanel>
-                </materialDesign:Card>
-                <!--递归导入子文件夹-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <ToggleButton DockPanel.Dock="Right" Margin="15,0" IsChecked="{Binding ImportSubfolders}"/>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="FolderOutline" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_ImportSubfolders}" VerticalAlignment="Center" />
+                </Border>
+
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <ToggleButton DockPanel.Dock="Right" VerticalAlignment="Center" IsChecked="{Binding ImportSubfolders}"/>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="FolderOutline" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Options_ImportSubfolders}"/>
                     </DockPanel>
-                </materialDesign:Card>
-                <!--全局热键-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <ToggleButton DockPanel.Dock="Right" Margin="15,0" IsChecked="{Binding UseHotkeys}"/>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Cog" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_Hotkeys}" VerticalAlignment="Center" />
+                </Border>
+
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <ToggleButton DockPanel.Dock="Right" VerticalAlignment="Center" IsChecked="{Binding UseHotkeys}"/>
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Cog" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Options_Hotkeys}"/>
                     </DockPanel>
-                </materialDesign:Card>
-                <!--标签-->
-                <Label Content="{x:Static loc:Resources.Humanize_Header}" Margin="10,0" FontWeight="Bold"/>
+                </Border>
+
+                <!--拟人化-->
+                <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static loc:Resources.Humanize_Header}"/>
                 <local:UserControlHumanize/>
-                <!--标签-->
-                <Label Content="{x:Static loc:Resources.Main_Market}" Margin="10,0" FontWeight="Bold"/>
-                <!--GitHub Token-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Key" Margin="15"/>
-                        <TextBox Margin="0,10,15,10" Text="{Binding GitHubToken, UpdateSourceTrigger=PropertyChanged}" ToolTip="{x:Static loc:Resources.Options_Tips_Token}"
+
+                <!--市场-->
+                <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static loc:Resources.Main_Market}"/>
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Key" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBox Margin="0" Text="{Binding GitHubToken, UpdateSourceTrigger=PropertyChanged}" ToolTip="{x:Static loc:Resources.Options_Tips_Token}"
                                  materialDesign:HintAssist.Hint="{x:Static loc:Resources.Options_GitHubToken}"
                                  materialDesign:TextFieldAssist.HasClearButton="True" Style="{StaticResource MaterialDesignFilledTextBox}"/>
                     </DockPanel>
-                </materialDesign:Card>
-                <!--标签-->
-                <Label Content="{x:Static loc:Resources.Options_Header_About}" Margin="10,0" FontWeight="Bold"/>
-                <!--开源地址-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <Button DockPanel.Dock="Right" Margin="5,0" Style="{StaticResource MaterialDesignIconButton}" Command="{Binding OpenWebPageCommand}" Cursor="Hand">
-                            <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesignBody}" Kind="ChevronRight" />
+                </Border>
+
+                <!--关于-->
+                <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static loc:Resources.Options_Header_About}"/>
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <Button DockPanel.Dock="Right" Margin="5,0" Style="{StaticResource MaterialDesignIconButton}" theme:UiMotion.PressScale="True" Foreground="{DynamicResource TextPrimaryBrush}" Command="{Binding OpenWebPageCommand}" Cursor="Hand">
+                            <materialDesign:PackIcon Kind="ChevronRight" />
                         </Button>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Github" Margin="15"/>
-                        <TextBlock Text="{x:Static loc:Resources.Options_GitHub}" VerticalAlignment="Center" />
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Github" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Resources.Options_GitHub}"/>
                     </DockPanel>
-                </materialDesign:Card>
-                <!--版本信息-->
-                <materialDesign:Card Style="{DynamicResource MaterialDesignOutlinedCard}" Height="Auto">
-                    <DockPanel>
-                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="InformationOutline" Margin="15"/>
-                        <TextBlock Text="{Binding VersionText}" VerticalAlignment="Center" />
+                </Border>
+                <Border Style="{StaticResource OptionCard}">
+                    <DockPanel Margin="14,10">
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="InformationOutline" Margin="0,0,12,0" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock VerticalAlignment="Center" Text="{Binding VersionText}"/>
                     </DockPanel>
-                </materialDesign:Card>
+                </Border>
             </StackPanel>
         </ScrollViewer>
     </Grid>

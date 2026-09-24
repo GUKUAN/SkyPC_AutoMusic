@@ -6,57 +6,88 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:SkyPC_AutoMusic.View"
              xmlns:loc="clr-namespace:SkyPC_AutoMusic.Properties"
+             xmlns:theme="clr-namespace:SkyPC_AutoMusic.Theme"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:model="clr-namespace:SkyPC_AutoMusic.Model"
              d:DataContext="{d:DesignInstance Type=model:PlayViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="550" d:Background="#FFE5E5E5">
-    <Grid Cursor="">
+             d:DesignHeight="360" d:DesignWidth="560" d:Background="Transparent">
+    <Grid Margin="18">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
-            <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="60"/>
-        </Grid.ColumnDefinitions>
 
-        <TextBlock Margin="10" Foreground="{DynamicResource PrimaryHueMidBrush}" HorizontalAlignment="Center" FontSize="20" Text="{Binding Headline}" Cursor="Hand">
+        <!--标题（点击看曲谱信息）-->
+        <TextBlock Style="{StaticResource PageTitle}" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" Cursor="Hand" Text="{Binding Headline}">
             <i:Interaction.Triggers>
-        <i:EventTrigger EventName="MouseLeftButtonDown">
-            <i:InvokeCommandAction Command="{Binding ShowSheetInfoCommand}"/>
-        </i:EventTrigger>  
-    </i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeftButtonDown">
+                    <i:InvokeCommandAction Command="{Binding ShowSheetInfoCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
         </TextBlock>
 
-        <StackPanel Grid.Row="1" VerticalAlignment="Center">
-            <Slider materialDesign:SliderAssist.OnlyShowFocusVisualWhileDragging="True" Height="20" Margin="20" Maximum="1" Value="{Binding SliderProgress}"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Label Content="{Binding CurrentTime}" HorizontalContentAlignment="Center" Width="40"/>
-                <Label Content="/" HorizontalContentAlignment="Center" Width="15"/>
-                <Label Content="{Binding TotalTime}" HorizontalContentAlignment="Center" Width="40"/>
+        <Grid Grid.Row="1" Margin="0,14,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <!--进度卡-->
+                <Border Style="{StaticResource GlassCard}" Padding="16,14">
+                    <StackPanel>
+                        <Slider materialDesign:SliderAssist.OnlyShowFocusVisualWhileDragging="True" Height="22" Maximum="1" Value="{Binding SliderProgress}"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,6,0,0">
+                            <TextBlock Style="{StaticResource MutedText}" VerticalAlignment="Center" Text="{Binding CurrentTime}"/>
+                            <TextBlock Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="4,0" Text="/"/>
+                            <TextBlock Style="{StaticResource MutedText}" VerticalAlignment="Center" Text="{Binding TotalTime}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!--控制卡-->
+                <Border Style="{StaticResource GlassCard}" Padding="16" Margin="0,12,0,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Style="{StaticResource MaterialDesignIconButton}" theme:UiMotion.PressScale="True" Width="56" Height="56" Margin="8,0"
+                                    Background="{DynamicResource GlassSurfaceHoverBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+                                    Command="{Binding PreviousSongCommand}" ToolTip="{x:Static loc:Resources.Play_Btn_PreviousMusic}">
+                                <materialDesign:PackIcon Width="26" Height="26" Kind="SkipPrevious" />
+                            </Button>
+                            <Button Style="{StaticResource MaterialDesignIconButton}" theme:UiMotion.PressScale="True" Width="68" Height="68" Margin="8,0"
+                                    Background="{DynamicResource AccentBrush}" Foreground="{DynamicResource AccentForegroundBrush}"
+                                    Command="{Binding TogglePlayCommand}" ToolTip="{Binding TogglePlayButtonLabel}">
+                                <materialDesign:PackIcon Width="32" Height="32" Kind="{Binding TogglePlayButtonIcon}" />
+                            </Button>
+                            <Button Style="{StaticResource MaterialDesignIconButton}" theme:UiMotion.PressScale="True" Width="56" Height="56" Margin="8,0"
+                                    Background="{DynamicResource GlassSurfaceHoverBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+                                    Command="{Binding NextSongCommand}" ToolTip="{x:Static loc:Resources.Play_Btn_NextMusic}">
+                                <materialDesign:PackIcon Width="26" Height="26" Kind="SkipNext" />
+                            </Button>
+                        </StackPanel>
+
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button Style="{StaticResource MaterialDesignFlatButton}" theme:UiMotion.PressScale="True" Foreground="{DynamicResource TextPrimaryBrush}" Command="{Binding SwitchModeCommand}" Content="{Binding PlayModeLabel}" Cursor="Hand"/>
+                            <Border Margin="8,0,0,0" CornerRadius="12" Padding="10,4" Background="{DynamicResource GlassSurfaceHoverBrush}">
+                                <TextBlock Style="{StaticResource MutedText}" VerticalAlignment="Center" Text="{Binding SpeedLabel}"/>
+                            </Border>
+                            <ToggleButton Margin="8,0,0,0" VerticalAlignment="Center" theme:UiMotion.PressScale="True" IsChecked="{Binding HumanizeEnabled}" Content="{x:Static loc:Resources.Play_Humanize_Toggle}"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Width="120" VerticalContentAlignment="Top" FontSize="12" Foreground="{DynamicResource MaterialDesignBody}" Command="{Binding SwitchModeCommand}" Content="{Binding PlayModeLabel}" Cursor="Hand"/>
-                <Label Content="{Binding SpeedLabel}" VerticalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
-                <ToggleButton Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="{Binding HumanizeEnabled}" Content="{x:Static loc:Resources.Play_Humanize_Toggle}"/>
-            </StackPanel>
-        </StackPanel>
 
-
-        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Cursor="">
-            <Button Style="{StaticResource MaterialDesignIconButton}" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}" Width="60" Height="60" Margin="10,0" Command="{Binding PreviousSongCommand}" ToolTip="{x:Static loc:Resources.Play_Btn_PreviousMusic}">
-                <materialDesign:PackIcon Width="30" Height="30" Kind="SkipPrevious" />
-            </Button>
-            <Button Style="{StaticResource MaterialDesignIconButton}" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}" Width="60" Height="60" Margin="10,0" Command="{Binding TogglePlayCommand}" ToolTip="{Binding TogglePlayButtonLabel}" Cursor="Hand">
-                <materialDesign:PackIcon Width="30" Height="30" Kind="{Binding TogglePlayButtonIcon}" />
-            </Button>
-            <Button Style="{StaticResource MaterialDesignIconButton}" Background="{DynamicResource MaterialDesignTextFieldBoxBackground}" Width="60" Height="60" Margin="10,0" Command="{Binding NextSongCommand}" ToolTip="{x:Static loc:Resources.Play_Btn_NextMusic}">
-                <materialDesign:PackIcon Width="30" Height="30" Kind="SkipNext" />
-            </Button>
-        </StackPanel>
-
-        <Slider materialDesign:SliderAssist.OnlyShowFocusVisualWhileDragging="True" Grid.Column="1" Grid.RowSpan="3" Orientation="Vertical" HorizontalAlignment="Center" Value="{Binding SliderSpeedModifier}" Margin="0,30" TickFrequency="1" TickPlacement="Both" Maximum="20" Minimum="1" Style="{StaticResource MaterialDesignDiscreteSlider}"/>
+            <!--速度卡（竖向滑块）-->
+            <Border Grid.Column="1" Style="{StaticResource GlassCard}" Margin="12,0,0,0" Padding="10,14" Width="64">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Style="{StaticResource MutedText}" HorizontalAlignment="Center" Text="{x:Static loc:Resources.Play_SpeedLabel}"/>
+                    <Slider materialDesign:SliderAssist.OnlyShowFocusVisualWhileDragging="True" Orientation="Vertical" Value="{Binding SliderSpeedModifier}"
+                            TickFrequency="1" TickPlacement="Both" Maximum="20" Minimum="1" MinHeight="120"
+                            Style="{StaticResource MaterialDesignDiscreteSlider}" Margin="0,10" HorizontalAlignment="Center"/>
+                    <TextBlock Style="{StaticResource BodyText}" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" Text="{Binding SpeedLabel}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

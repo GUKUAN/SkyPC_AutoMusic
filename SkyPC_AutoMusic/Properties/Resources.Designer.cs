@@ -1121,5 +1121,11 @@ namespace SkyPC_AutoMusic.Properties {
                 return ResourceManager.GetString("Play_Humanize_Toggle", resourceCulture);
             }
         }
+        
+        public static string Options_Theme {
+            get {
+                return ResourceManager.GetString("Options_Theme", resourceCulture);
+            }
+        }
     }
 }

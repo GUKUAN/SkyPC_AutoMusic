@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:SkyPC_AutoMusic"
+             xmlns:theme="clr-namespace:SkyPC_AutoMusic.Theme"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -11,12 +12,55 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Indigo.xaml"/>
-                
+
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Snackbar.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListView.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!--玻璃阴影-->
+            <DropShadowEffect x:Key="GlassShadow" BlurRadius="22" ShadowDepth="2" Opacity="0.32" Color="#000000"/>
+            <DropShadowEffect x:Key="GlassShadowSoft" BlurRadius="14" ShadowDepth="1" Opacity="0.22" Color="#000000"/>
+
+            <!--玻璃卡片-->
+            <Style x:Key="GlassCard" TargetType="Border">
+                <Setter Property="Background" Value="{DynamicResource GlassPanelBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource GlassStrokeBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="14"/>
+                <Setter Property="Effect" Value="{StaticResource GlassShadowSoft}"/>
+            </Style>
+
+            <!--页面标题-->
+            <Style x:Key="PageTitle" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                <Setter Property="FontSize" Value="22"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+            </Style>
+
+            <!--分组标题-->
+            <Style x:Key="SectionHeader" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Margin" Value="4,14,4,6"/>
+            </Style>
+
+            <!--正文/次要文字-->
+            <Style x:Key="BodyText" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                <Setter Property="FontSize" Value="13"/>
+            </Style>
+            <Style x:Key="MutedText" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}"/>
+                <Setter Property="FontSize" Value="11"/>
+            </Style>
+
+            <!--玻璃图标按钮底-->
+            <Style x:Key="GlassIconSurface" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+                <Setter Property="Background" Value="{DynamicResource GlassSurfaceHoverBrush}"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

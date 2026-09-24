@@ -8,20 +8,22 @@
              xmlns:loc="clr-namespace:SkyPC_AutoMusic.Properties"
              mc:Ignorable="d"
              x:Name="Dialog"
-             MaxWidth="400"
-             MaxHeight="200"
-             d:DesignHeight="200" d:DesignWidth="400" d:Background="{DynamicResource MaterialDesignPaper}">
-    <Grid Margin="8">
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <DockPanel>
-            <materialDesign:PackIcon Kind="MessageAlertOutline" DockPanel.Dock="Left" Margin="20,20,5,20" Height="25" Width="25"/>
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <TextBlock x:Name="Message" Margin="15" FontSize="14" Grid.Row="0" TextWrapping="Wrap" MinWidth="200"/>
-            </ScrollViewer>
-        </DockPanel>
-        <Button Grid.Row="1" IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Right" Margin="6" Content="{x:Static loc:Resources.Options_Confirm}" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"/>
-    </Grid>
+             MaxWidth="420"
+             MaxHeight="240"
+             d:DesignHeight="200" d:DesignWidth="420" Background="Transparent">
+    <Border Style="{StaticResource GlassCard}" Padding="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <DockPanel>
+                <materialDesign:PackIcon Kind="MessageAlertOutline" DockPanel.Dock="Left" Margin="16,16,6,16" Height="24" Width="24" Foreground="{DynamicResource AccentBrush}"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBlock x:Name="Message" Margin="12" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" Grid.Row="0" TextWrapping="Wrap" MinWidth="200"/>
+                </ScrollViewer>
+            </DockPanel>
+            <Button Grid.Row="1" IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Right" Margin="6" Content="{x:Static loc:Resources.Options_Confirm}" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"/>
+        </Grid>
+    </Border>
 </UserControl>
